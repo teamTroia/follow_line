@@ -1,6 +1,6 @@
  /*  Pandemia-2020-2021
     Follow line utilizando STM32F103C8T6 - TROIA
-    por: Luara Linhares e Fidelis 
+    por: Luara Linhares e Fidelis ihuuuu
 */
 
 // PID --------------------------------------------------------------
