@@ -231,7 +231,7 @@ inline void sensorLer() {
     sCruzamento = 1;
     sCruzamentoTempo = millis();
   }
-  if (sCruzamento && (millis() - sCruzamentoTempo) > 70) {
+  if (sCruzamento && (millis() - sCruzamentoTempo) > 270) {
     sCruzamento = 0;
   }
 
@@ -253,6 +253,8 @@ inline void sensorLer() {
     auxTemp = micros();
     while ((micros() - auxTemp) < 10); // Esperar por 10us
     // Sensor 0
+   
+    
     sensorBordaAnalog[0] = 0;
     sensorBordaAnalog[1] = 0;
     auxTemp = micros();
@@ -269,6 +271,13 @@ inline void sensorLer() {
 
     if (sensorBordaAnalog[0] == 0) sensorBordaAnalog[0] = 65535;//TA FALANDO QUE SE A LEITURA FOR FALSA, TA NO PRETO; 65535 é o PWM em binário
     if (sensorBordaAnalog[1] == 0) sensorBordaAnalog[1] = 65535;
+     Serial.println("bordA 1: ");
+    Serial.print(sensorBordaAnalog[0]);
+     Serial.println("");
+      Serial.println("bordA 2: ");
+    Serial.print(sensorBordaAnalog[1]);
+    //Serial.println("");
+   
 
     sensorBordaDig[0] = (sensorBordaAnalog[0] < sensorBordaThreshold[0]);
     sensorBordaDig[1] = (sensorBordaAnalog[1] < sensorBordaThreshold[1]);
