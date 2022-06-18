@@ -1,3 +1,6 @@
+#ifndef sensorLinha_H
+#define sensorLinha_H
+
 #include "./types.h"
 
 class SensorLinha {
@@ -9,3 +12,5 @@ public:
     bool itsBlack (uint16 valor);
 
 };
+
+#endif

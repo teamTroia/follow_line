@@ -1,3 +1,6 @@
+#ifndef sensorBorda_H
+#define sensorBorda_H
+
 #include "./types.h"
 
 class SensorBorda {
@@ -7,3 +10,5 @@ public:
     SensorBorda();
     void ler(bool valorBorda[]);
 };
+
+#endif

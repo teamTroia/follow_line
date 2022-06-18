@@ -5,6 +5,11 @@
 #define BORDA_RC_TIMEOUT 900
 #define pivo 3000
 #define DEBUGMODE true
+#define SIMPLECONTROL true
+
+//Velocidades
+#define MAXVELA 100
+#define MAXVELB 100
 
 //Pinout seguindo a placa 2020
 
@@ -14,14 +19,14 @@
 #define BOT1 PB3
 #define BOT2 PB4
 #define BOT3 PB12
-#define MAPIN1 PB8
-#define MAPIN2 PB14
-#define MBPIN1 PB9
-#define MBPIN2 PB15
-#define ENA1 PA10
-#define ENA2 PA11
-#define ENB1 PB5
-#define ENB2 PB11
+#define ENA1 PB8
+#define ENA2 PB14
+#define ENB1 PB9
+#define ENB2 PB15
+#define MAPIN1 PA10 
+#define MAPIN2 PA11
+#define MBPIN1 PB7 //Era PB5
+#define MBPIN2 PB6 //Era PB11
 #define S1 PA7 
 #define S2 PA6 
 #define S3 PA5 

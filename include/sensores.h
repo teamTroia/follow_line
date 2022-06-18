@@ -1,3 +1,6 @@
+#ifndef sensor_H
+#define sensor_H
+
 #include "./types.h"
 
 class Sensores {
@@ -8,3 +11,5 @@ public:
     void init();
     void sensorCalibrate (treshold tresholds[]);
 };
+
+#endif

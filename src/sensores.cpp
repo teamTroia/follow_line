@@ -67,6 +67,7 @@ void Sensores::sensorCalibrate(treshold tresholds[]) {
     for (int j = 0; j < 8; j++)
     {
       valor = analogRead(sensorPins[j]);
+      Serial.println(valor);
       if(valor > pivo) { //Branco
         if (tresholds[j].max <= valor) {
           tresholds[j].max = valor;

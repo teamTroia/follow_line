@@ -17,15 +17,27 @@ void Motor::init() {
   pinMode (MAPIN2, PWM);
   pinMode (MBPIN1, PWM);
   pinMode (MBPIN2, PWM);
-  while (true)
-  {
-    Serial.println("##################");
-    delay(100);
+
+
+  if (DEBUGMODE) {
+    pwmWrite(MAPIN1, 0);
+    pwmWrite(MAPIN2, 0);
+
+    pwmWrite(MBPIN1, 60000);
+    pwmWrite(MBPIN2, 0);
+    delay(1000);
+    pwmWrite(MAPIN1, 0);
+    pwmWrite(MAPIN2, 60000);
+
+    pwmWrite(MBPIN1, 0);
+    pwmWrite(MBPIN2, 0);
+    delay(1000);
   }
   pwmWrite(MAPIN1, 0); // Todos os acionamentos são colocados em sinal baixo.
-  pwmWrite(MAPIN2, 0);
   pwmWrite(MBPIN1, 0);
+  pwmWrite(MAPIN2, 0);
   pwmWrite(MBPIN2, 0);
+
   
 }
 /*
@@ -55,7 +67,7 @@ void Motor::stopAll() {
 /*
   Seta velocidade do motor A
 */
-void Motor::setA(uint16 vel, uint8 MAXVELA) {
+void Motor::setA(uint16 vel) {
   if (vel > 0) {
     pwmWrite(MAPIN2, 0);
     vel  = vel * MAXVELA *  6.5535;
@@ -72,7 +84,7 @@ void Motor::setA(uint16 vel, uint8 MAXVELA) {
 /*
   Seta velocidade do motor B
 */
-void Motor::setB(uint16 vel, uint8 MAXVELB) {
+void Motor::setB(uint16 vel) {
   if (vel > 0) {
     pwmWrite(MBPIN2, 0);
     vel  = vel * MAXVELB *  6.5535;
@@ -90,7 +102,7 @@ void Motor::setB(uint16 vel, uint8 MAXVELB) {
 /*
   Seta velocidade dos motores
 */
-void Motor::setAll(uint16 velA, uint16 velB, uint8 MAXVELA, uint8 MAXVELB) {
-  Motor::setA(velA, MAXVELA);
-  Motor::setB(velB, MAXVELB);
+void Motor::setAll(uint16 velA, uint16 velB) {
+  Motor::setA(velA);
+  Motor::setB(velB);
 }

@@ -28,25 +28,38 @@
 #include "../include/sensores.h"
 #include "../include/motor.h"
 #include "../include/sensorBorda.h"
+#include "../include/funcsAux.h"
+#include "../include/simpleControl.h"
 
 treshold tresholds[8];
 uint8 bordaCont = 0;
+uint32 auxTemp = micros();
+
+//------------------------------//
+//    Iniciação de objetos      //
+//------------------------------//
+
+Sensores sensores = Sensores();
+Motor motores = Motor();
+SensorBorda senBord = SensorBorda();
+FuncsAux funcsAux = FuncsAux();
+
+//------------------------------//
+//    Iniciação de objetos      //
+//------------------------------//
 
 void setup() {
   Serial.begin(9600);
   if (DEBUGMODE) {
     Serial.println("Iniciando...");
   }
-  Sensores sensores = Sensores();
-  Motor motores = Motor();
-
-  motores.init();
   
+  motores.init();
   sensores.init();
 
   for (int i = 0; i < 8; i++) { //Seta tresholds padrão pro caso de não calibrar
-    tresholds[i].min = 2000;
-    tresholds[i].max = 4000;
+    tresholds[i].min = pivo-50;
+    tresholds[i].max = pivo+50;
   }
   
   while(digitalRead(BOT2) == LOW) {
@@ -57,14 +70,21 @@ void setup() {
   if (DEBUGMODE) {
     Serial.println("Sensores Calibrados!");
   }
+  funcsAux.estadoLeds(false);
+  delay(500);
+  funcsAux.estadoLeds(true);
+  delay(500);
+  funcsAux.estadoLeds(false);
+  delay(500);
+  funcsAux.estadoLeds(true);
+  delay(500);
 }
 void loop() {
+  FuncsAux funcsAux = FuncsAux();
+  
   if (DEBUGMODE) {
     Serial.println("Entrou no loop");
   }
-  Sensores sensores = Sensores();
-  SensorBorda senBord = SensorBorda();
-  //Motor motores = Motor();
 
   
   bool valorBorda[2];
@@ -77,17 +97,17 @@ void loop() {
         Serial.println(valorBorda[1]);
     }
   if (valorBorda[0] == 1) {
-    bordaCont++;
+    if (auxTemp - micros() >= 10000000) {
+      auxTemp = 0;
+      //bordaCont++;
+    }
   }
   if (bordaCont >= 2) {
-    if (DEBUGMODE) {
-      Serial.print("ACAAAABBBBOOOOUUUUU!!!!!");
-    }
-    //motores.stopAll();
+     funcsAux.fim(motores);
   }else {
-    //Resto do codigo do follow aqui
-  }
-  
-  
-
+     if (SIMPLECONTROL) {
+      SimpleControl simpleControl = SimpleControl();
+      simpleControl.main(tresholds);
+     }
+   }
 }
