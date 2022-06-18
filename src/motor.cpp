@@ -1,25 +1,12 @@
-/*  Motor para DRV8848
-*/
-
-//#Define-------------------------------------------
-// Pinos dos motores A e B -> PWM IN1 IN2, STBY
-#define MAIN1 PA10
-#define MAIN2 PA11
-#define MBIN1 PB7
-#define MBIN2 PB6
-
-#define MAXVELA 40
-#define MAXVELB 40
-
-//Headers-------------------------------------------
-inline void motorInit(void) __attribute__((always_inline));                   //Inicializa Motor
-inline void motorSetVel(int velA, int velB ) __attribute__((always_inline));  //seta velocidade -255a255 do motoa A e B
-inline void motorStop(void) __attribute__((always_inline));                   //Trava motores
-
-//Variáveis-----------------------------------------
+#include "./types.h"
+#include "../include/motor.h"
 
 //Funções------------------------------------------
-void motorInit() {
+Motor::Motor () {
+
+}
+
+void Motor::motorInit() {
   pinMode (MAIN1, PWM); // As variáveis IN são para acionamento do TLE, logo são saídas.(OUTPUT).
   pinMode (MAIN2, PWM);
   pinMode (MBIN1, PWM);
@@ -33,21 +20,21 @@ void motorInit() {
   //Serial.println("Motores inicializados!");
 }
 
-void stop_MotorA() {
+void Motor::stop_MotorA() {
   pwmWrite(MAIN1, 0);
   pwmWrite(MAIN2, 0);
 }
-void stop_MotorB() {
+void Motor::stop_MotorB() {
   pwmWrite(MBIN1, 0);
   pwmWrite(MBIN2, 0);
 }
 
-void stop_Motor() {
+void Motor::stop_Motor() {
   stop_MotorA();
   stop_MotorB();
 }
 
-void set_MotorA(int vel) {
+void Motor::set_MotorA(int vel) {
   if (vel > 0) {
     pwmWrite(MAIN2, 0);
     vel  = vel * MAXVELA *  6.5535;
@@ -60,7 +47,7 @@ void set_MotorA(int vel) {
     pwmWrite(MAIN2, vel);
   }
 }
-void set_MotorB(int vel) {
+void Motor::set_MotorB(int vel) {
   if (vel > 0) {
     pwmWrite(MBIN2, 0);
     vel  = vel * MAXVELB *  6.5535;
@@ -75,7 +62,7 @@ void set_MotorB(int vel) {
   }
 }
 
-void motorSetVel(int vel1, int vel2) {
+void Motor::motorSetVel(int vel1, int vel2) {
   set_MotorA(vel1);
   //Serial.print(vel1);
   set_MotorB(vel2);
