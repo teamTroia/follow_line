@@ -10,11 +10,11 @@
 #define BORDA_RC_TIMEOUT 900
 #define divisor 7 // divisor da faixa que determina o threshold
 
-#define LED_L1 PA9
-#define LED_L2 PB4
-#define LED_L3 PB15
-#define BOT1 PA15
-#define BOT2 PB3
+#define LED_L1 PB12
+#define LED_L2 PB0
+#define LED_L3 PA9
+#define BOT1 PB3
+#define BOT2 PB4
 
 //#Header-------------------------------------------
 inline void sensorInit() __attribute__((always_inline));
@@ -23,7 +23,7 @@ inline void sensorLer() __attribute__((always_inline));
 //Variáveis----------------------------------------------------------------
 
 const int sensorArrayPin[8] = {PA7, PA6, PA5, PA4, PA3, PA2, PA1, PA0};//matriz com os nossos 8 sensores de linha
-const int sensorBordaPin[2] = {PB12, PA10};
+const int sensorBordaPin[2] = {PB10, PA8};
 
 const int sensorArrayErroConst[8] = { 3, 1.75, 1.75, 0.5, -0.5, 1.75, -1.75, -3};//posição dos sensores varia de 3 a -3
 float sensorArrayErro;
@@ -45,9 +45,9 @@ unsigned long int sCruzamentoTempo = 0;
 
 //0bs: maior valor lido= preto; menor valor lido=branco; abaixo de 3100 é branco
 int maiorArrayAnalog[8] = {4200, 4200, 4200, 4200, 4200, 4200, 4200, 4200}; // Maior valor medido pelo array de sensores (valores já pré-determinados para evitar erros na falta da calibração)
-int menorArrayAnalog[8] = {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500}; // Menor valor medido pelo array de sensores
-int superiorThreshold[] = {3689, 3685, 3688, 3721, 3750, 3772, 3766, 3835};//Maiores valores reais lidos e tirados através de testes
-int inferiorThreshold[] = {3146, 3150, 3166, 3239, 3302, 3364, 3343, 3524};//Menores valores reais lidos e tirados através de testes
+int menorArrayAnalog[8] = {900, 1500, 1500, 1500, 1500, 1500, 1500, 1500}; // Menor valor medido pelo array de sensores
+int superiorThreshold[] = {4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095};//Maiores valores reais lidos e tirados através de testes
+int inferiorThreshold[] = {400, 600, 600, 600, 600, 600, 600, 600};//Menores valores reais lidos e tirados através de testes
 
 int maiorBordaAnalog[] = {4000, 4000};
 int menorBordaAnalog[] = {1500, 1500};
@@ -175,6 +175,8 @@ inline void sensorLer() {
   sCont = 0;
   //Array
   for (sii = 0; sii < 8; sii++) {
+    Serial.println(sii);
+    //Serial.print(" : ");
     sensorArrayAnalog[sii] = analogRead(sensorArrayPin[sii]);
     /*sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
       sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
@@ -188,17 +190,21 @@ inline void sensorLer() {
     if (INVERTER) {//como foi declarado INVERTER, vamos declarar como verdadeiro se está no preto
       if (sensorArrayDig[sii] == 0 && sensorArrayAnalog[sii] > superiorThreshold[sii]) {
         sensorArrayDig[sii] = 1;//VERDADEIRO, é preto
+        Serial.println("branco");
       }
       if (sensorArrayDig[sii] == 1 && sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
         sensorArrayDig[sii] = 0;//FALSO; não é preto
+        Serial.println("preto");
       }
     }
     else {
-      if (sensorArrayDig[sii] == 1 && sensorArrayAnalog[sii] > superiorThreshold[sii]) {
+      if ( sensorArrayAnalog[sii] > superiorThreshold[sii]) {
         sensorArrayDig[sii] = 0;
+        Serial.println("PRETO");
       }
-      if (sensorArrayDig[sii] == 0 && sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
+      if ( sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
         sensorArrayDig[sii] = 1;//se estiver no branco, é verdadeiro
+        Serial.println("BRANCO");
       }
     }
 
@@ -271,12 +277,12 @@ inline void sensorLer() {
 
     if (sensorBordaAnalog[0] == 0) sensorBordaAnalog[0] = 65535;//TA FALANDO QUE SE A LEITURA FOR FALSA, TA NO PRETO; 65535 é o PWM em binário
     if (sensorBordaAnalog[1] == 0) sensorBordaAnalog[1] = 65535;
-     Serial.println("bordA 1: ");
-    Serial.print(sensorBordaAnalog[0]);
+    // Serial.println("bordA 1: ");
+    /*Serial.print(sensorBordaAnalog[0]);
      Serial.println("");
       Serial.println("bordA 2: ");
     Serial.print(sensorBordaAnalog[1]);
-    //Serial.println("");
+    //Serial.println("");*/
    
 
     sensorBordaDig[0] = (sensorBordaAnalog[0] < sensorBordaThreshold[0]);

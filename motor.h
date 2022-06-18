@@ -3,13 +3,13 @@
 
 //#Define-------------------------------------------
 // Pinos dos motores A e B -> PWM IN1 IN2, STBY
-#define MAIN1 PB0
-#define MAIN2 PB8
-#define MBIN1 PB9
-#define MBIN2 PA8
-//teste
-#define MAXVELA 70
-#define MAXVELB 70
+#define MAIN1 PA10
+#define MAIN2 PA11
+#define MBIN1 PB7
+#define MBIN2 PB6
+
+#define MAXVELA 40
+#define MAXVELB 40
 
 //Headers-------------------------------------------
 inline void motorInit(void) __attribute__((always_inline));                   //Inicializa Motor
@@ -77,5 +77,7 @@ void set_MotorB(int vel) {
 
 void motorSetVel(int vel1, int vel2) {
   set_MotorA(vel1);
+  //Serial.print(vel1);
   set_MotorB(vel2);
+  //Serial.print(vel2);
 }

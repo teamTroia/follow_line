@@ -1,5 +1,4 @@
  /*  Pandemia-2020-2021
- RSM 23/4/2022
     Follow line utilizando STM32F103C8T6 - TROIA
     por: Luara Linhares e Fidelis ihuuuu
 */
@@ -29,13 +28,13 @@ float KP_c_fechada = 0.33,
       Vel_erro_c_fechada = 0.5;
 
 //#Define------------------------------------------------------------
-#define LED_L1 PA9
-#define LED_L2 PB4
-#define LED_L3 PB15
-#define BOT1 PA15
-#define BOT2 PB3
+#define LED_L1 PB12
+#define LED_L2 PB0
+#define LED_L3 PA9
+#define BOT1 PB3
+#define BOT2 PB4
 #define dist_L 0.150 // distância entre rodas
-#define analogBat PB1   // Pino do leitor de bateria
+#define analogBat PA12   // Pino do leitor de bateria
 
 //#Include-----------------------------------------------------------
 #include "motor.h"
@@ -75,6 +74,8 @@ boolean LOWBAT = false, // verdadeiro para indicar a bateria fraca
 void verificaBateria();
 
 void setup() {
+  /*afio_remap(AFIO_REMAP_TIM3_PARTIAL);// tem q add isso no código tbm, no caso da PB5
+  afio_remap(AFIO_REMAP_TIM2_PARTIAL_2);//PB11*/
   motorInit();
   pinMode(BOT1, INPUT_PULLUP);
   pinMode(BOT2, INPUT_PULLUP);
@@ -102,11 +103,11 @@ void loop() {
     tempo=millis();
   //bot2 parou de funfar, depois tem q apagar essA GAMBI
 
-  if (digitalRead(BOT1)) {
+ /* if (digitalRead(BOT1)) {
     B++;
-    }
+    }*/
 
-  if (digitalRead(BOT2)) {
+  if (digitalRead(BOT2)&& tempo>=13000 and tempo<14000) {
     
     digitalWrite(LED_L1, HIGH); //1
     delay(50);
@@ -147,8 +148,9 @@ void loop() {
     digitalWrite(LED_L3, LOW);
 
     T_Parada = millis();
-  } else if (digitalRead(BOT1) && Iniciado == 0 ) {       //condição calibração
+  } else if (digitalRead(BOT1) && Iniciado == 0 && tempo<=2000 ) {       //condição calibração
     sensorCalibrate();
+    Serial.println("calibrando...");
   }
  
   sensorLer();
@@ -337,9 +339,9 @@ void loop() {
       //        if (Trecho == 0) {
       //          motorSetVel(Uv[0] * 0.2 * 65535, Uv[1] * 0.2 * 65535);
       //        }else
-     motorSetVel(Uv[0] * 3100, Uv[1] * 3100);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
+     motorSetVel(Uv[0] * 2000, Uv[1] * 2000);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
       //porque o Uv foi calcula pra ser um valor entre 0 e 1; quebrado (double)
-
+    
     }
   } else {    // É para as vezes pares que acionar o botão de Start, o robô para e zera a contagem dos sensores de borda
 
