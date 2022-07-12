@@ -11,7 +11,21 @@
 Motor::Motor() {
 
 }
+
+/* Inicia os motores */
 void Motor::init() {
+
+  //Primeiro jogar o Nsleep p alto, isso ira desligar a ponte H
+  pinMode (NSLEEP, OUTPUT);
+  digitalWrite(NSLEEP, HIGH);
+  //Jogar os dois pinos de entrada do motor A para nivel baixo
+  pinMode (MAPIN1, OUTPUT);
+  pinMode (MAPIN2, OUTPUT);
+  digitalWrite(MAPIN1, LOW);
+  digitalWrite(MAPIN2, LOW);
+
+  //Agora Liga a ponte H e esta pronta para usar :p
+  digitalWrite(NSLEEP, LOW);
   
   pinMode (MAPIN1, PWM); // As variáveis IN são para acionamento do TLE, logo são saídas.(OUTPUT).
   pinMode (MAPIN2, PWM);
@@ -21,16 +35,19 @@ void Motor::init() {
 
   if (DEBUGMODE) {
     pwmWrite(MAPIN1, 0);
-    pwmWrite(MAPIN2, 0);
+    pwmWrite(MAPIN2, 60000);
 
     pwmWrite(MBPIN1, 60000);
     pwmWrite(MBPIN2, 0);
+
     delay(1000);
-    pwmWrite(MAPIN1, 0);
-    pwmWrite(MAPIN2, 60000);
+
+    pwmWrite(MAPIN1, 60000);
+    pwmWrite(MAPIN2, 0);
 
     pwmWrite(MBPIN1, 0);
-    pwmWrite(MBPIN2, 0);
+    pwmWrite(MBPIN2, 60000);
+
     delay(1000);
   }
   pwmWrite(MAPIN1, 0); // Todos os acionamentos são colocados em sinal baixo.

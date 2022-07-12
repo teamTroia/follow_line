@@ -14,7 +14,7 @@
 //Pinout seguindo a placa 2020
 
 #define LED1 PB12
-#define LED2 PB0
+#define LED2 PA11
 #define LED3 PA9
 #define BOT1 PB3
 #define BOT2 PB4
@@ -24,7 +24,7 @@
 #define ENB1 PB9
 #define ENB2 PB15
 #define MAPIN1 PA10 
-#define MAPIN2 PA11
+#define MAPIN2 PB0
 #define MBPIN1 PB7 //Era PB5
 #define MBPIN2 PB6 //Era PB11
 #define S1 PA7 
@@ -39,6 +39,7 @@
 #define SBD PB10
 #define pwm PB1
 #define BAT PA12
+#define NSLEEP PB5
 
 
 
