@@ -4,12 +4,14 @@
 //#Define-------------------------------------------
 // Pinos dos motores A e B -> PWM IN1 IN2, STBY
 #define MAIN1 PA10
-#define MAIN2 PA11
+#define MAIN2 PB0
 #define MBIN1 PB7
 #define MBIN2 PB6
 
-#define MAXVELA 40
-#define MAXVELB 40
+#define MAXVELA 20
+#define MAXVELB 20
+
+#define NSLEEP PB5
 
 //Headers-------------------------------------------
 inline void motorInit(void) __attribute__((always_inline));                   //Inicializa Motor
@@ -20,6 +22,18 @@ inline void motorStop(void) __attribute__((always_inline));                   //
 
 //Funções------------------------------------------
 void motorInit() {
+  //Primeiro jogar o Nsleep p alto, isso ira desligar a ponte H
+  pinMode (NSLEEP, OUTPUT);
+  digitalWrite(NSLEEP, HIGH);
+  //Jogar os dois pinos de entrada do motor A para nivel baixo
+  pinMode (MAIN1, OUTPUT);
+  pinMode (MAIN2, OUTPUT);
+  digitalWrite(MAIN1, LOW);
+  digitalWrite(MAIN2, LOW);
+
+  //Agora Liga a ponte H e esta pronta para usar :p
+  digitalWrite(NSLEEP, LOW);
+
   pinMode (MAIN1, PWM); // As variáveis IN são para acionamento do TLE, logo são saídas.(OUTPUT).
   pinMode (MAIN2, PWM);
   pinMode (MBIN1, PWM);
