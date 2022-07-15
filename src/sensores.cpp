@@ -27,13 +27,13 @@ unsigned long int sCruzamentoTempo = 0;
 //0bs: maior valor lido= preto; menor valor lido=branco; abaixo de 3100 é branco
 int maiorArrayAnalog[8] = {4200, 4200, 4200, 4200, 4200, 4200, 4200, 4200}; // Maior valor medido pelo array de sensores (valores já pré-determinados para evitar erros na falta da calibração)
 int menorArrayAnalog[8] = {900, 1500, 1500, 1500, 1500, 1500, 1500, 1500}; // Menor valor medido pelo array de sensores
-int superiorThreshold[] = {4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095};//Maiores valores reais lidos e tirados através de testes
-int inferiorThreshold[] = {400, 600, 600, 600, 600, 600, 600, 600};//Menores valores reais lidos e tirados através de testes
+int superiorThreshold[8] = {4095, 3900, 4095, 4095, 4095, 4095, 4095, 4095};//Maiores valores reais lidos e tirados através de testes
+int inferiorThreshold[8] = {2020, 700, 1000, 1000, 1000, 1100, 1200, 2600};//Menores valores reais lidos e tirados através de testes
 
-int maiorBordaAnalog[] = {4000, 4000};
-int menorBordaAnalog[] = {1500, 1500};
-int superiorThresholdBorda[] = {300, 100};
-int inferiorThresholdBorda[] = {300, 100};
+int maiorBordaAnalog[2] = {4000, 4000};
+int menorBordaAnalog[2] = {1500, 1500};
+int superiorThresholdBorda[2] = {300, 100};
+int inferiorThresholdBorda[2] = {300, 100};
 
 int faixaLeituraArray[8];
 int faixaLeituraBorda[2];
@@ -92,6 +92,11 @@ void Sensores::sensorCalibrate() {
   for (int j = 0; j < 4000; j++) {
     for (int i = 0; i < 8; i++) {
       sensorArrayAnalog[i] = analogRead(sensorArrayPin[i]);
+      Serial.print("Sensor ");
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.println(sensorArrayAnalog[i]);
+
       if (sensorArrayAnalog[i] > maiorArrayAnalog[i]) {
         maiorArrayAnalog[i] = sensorArrayAnalog[i];
       }
@@ -144,7 +149,7 @@ void Sensores::sensorCalibrate() {
     Serial.print(", ");
   }
   Serial.println("};");
-
+  delay(5000);
 
 }
 
@@ -197,7 +202,7 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
         Serial.println("BRANCO");
       }
     }
-    delay(500);
+    //delay(500);
 
     //essa parte soma a posição dos sensores e descobre o valor de erro e é usado no PID
 

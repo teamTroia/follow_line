@@ -14,8 +14,8 @@ char trechoTipo[] = { 'R', 'A','C','F','C','F','C','A' ,'C','F','C','A','C','A',
 //char trechoTipo[] = { 'R', 'A','C','F','C','F' ,'C','F','C','A','R'}; //oficial dia 1
 //char trechoTipo[] = { '1', '2','3','4','5','6' ,'7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29'}; //OFICIAL
 
-float KP_R = 0.8, // CORRIGE MAIS RÁPIDO MAS CAUSA INSTABILIDADE -------------- 0.6 ---- 0.7
-      KI_R = 0.0, // CORRIGE NO LONGO TEMPO ---------------------------------- 0.01 --- 0.005
+float KP_R = 0.7, // CORRIGE MAIS RÁPIDO MAS CAUSA INSTABILIDADE -------------- 0.6 ---- 0.7
+      KI_R = 0.005, // CORRIGE NO LONGO TEMPO ---------------------------------- 0.01 --- 0.005
       KD_R = 0.4, // CORRIGE MAIS RÁPIDO ------------------------------------ 0.015 -- 0.00 
       Vel_R = 0.55, // -------------------------------------------------------- 0.05 --- 0.05
       Vel_erro_R = 0.5; // ----------------esse de curva----------------------------------- 0.08 --- 0.15
@@ -97,14 +97,19 @@ void setup() {
 }
 
 void loop() {
-    tempo=millis();
+  tempo=millis();
   //bot2 parou de funfar, depois tem q apagar essA GAMBI
 
  /* if (digitalRead(BOT1)) {
     B++;
     }*/
-
-  if (digitalRead(BOT2)&& tempo>=13000 and tempo<14000) {
+  // while (true)
+  //   {
+  //     Serial.println(digitalRead(BOT1));
+  //     Serial.println(digitalRead(BOT2));
+  //     delay(3000);
+  //   } 
+  while ((!digitalRead(BOT2)) && (Iniciado == 0)) {
     
     digitalWrite(LED_L1, HIGH); //1
     delay(50);
@@ -118,38 +123,29 @@ void loop() {
     
     parou = 0;
 
-    Iniciado += 1;
     T_Sen_0 = T_Sen_1 = micros();
 
     delay(100);
     digitalWrite(LED_L1, HIGH); //1
+    digitalWrite(LED_L3, LOW);
     delay(50);
-    digitalWrite(LED_L1, LOW);
-    delay(50);
+    digitalWrite(LED_L1, LOW); //1
     digitalWrite(LED_L3, HIGH);
     delay(50);
+    digitalWrite(LED_L1, HIGH); //1
     digitalWrite(LED_L3, LOW);
-    delay(500);
-    digitalWrite(LED_L1, HIGH); //2
     delay(50);
-    digitalWrite(LED_L1, LOW);
-    delay(50);
+    digitalWrite(LED_L1, LOW); //1
     digitalWrite(LED_L3, HIGH);
     delay(50);
-    digitalWrite(LED_L3, LOW);
-    delay(500);
-    digitalWrite(LED_L1, HIGH);
-    digitalWrite(LED_L3, HIGH);
-    delay(200);
-    digitalWrite(LED_L1, LOW);
-    digitalWrite(LED_L3, LOW);
 
     T_Parada = millis();
-  } else if (digitalRead(BOT1) && Iniciado == 0 && tempo<=2000 ) {       //condição calibração
-    //sensor.sensorCalibrate();
-    Serial.println("calibrando...");
+    if (digitalRead(BOT1)) {       //condição calibração
+      sensor.sensorCalibrate();
+      Serial.println("calibrando...");
+      Iniciado = 1;
+    }
   }
- 
   sensor.sensorLer(sensorArrayErro, sensorBordaDig);
   
   Serial3.print(senStarStop); Serial3.print(" ,"); 
