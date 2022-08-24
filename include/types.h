@@ -5,8 +5,8 @@
 #define MBIN1 PB7 //Era PB5
 #define MBIN2 PB6 //Era PB11
 
-#define MAXVELA 10
-#define MAXVELB 10
+#define MAXVELA 40
+#define MAXVELB 40
 
 #define INVERTER 0  //se quiser inverter os sensor colocar 1 se não 0
 // Linha branca INVERTER = 0, linha preta INVERTER = 1

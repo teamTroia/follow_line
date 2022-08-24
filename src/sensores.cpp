@@ -27,8 +27,8 @@ unsigned long int sCruzamentoTempo = 0;
 //0bs: maior valor lido= preto; menor valor lido=branco; abaixo de 3100 é branco
 int maiorArrayAnalog[8] = {4200, 4200, 4200, 4200, 4200, 4200, 4200, 4200}; // Maior valor medido pelo array de sensores (valores já pré-determinados para evitar erros na falta da calibração)
 int menorArrayAnalog[8] = {900, 1500, 1500, 1500, 1500, 1500, 1500, 1500}; // Menor valor medido pelo array de sensores
-int superiorThreshold[8] = {4095, 4095, 4095, 4095, 3500, 4095, 4095, 4095};//Maiores valores reais lidos e tirados através de testes
-int inferiorThreshold[8] = {2500, 2200, 1300, 1300, 1400, 1100, 1500, 2900};//Menores valores reais lidos e tirados através de testes
+int superiorThreshold[8] = {1000, 1700, 4095, 4095, 3300, 4095, 4095, 4095};//Maiores valores reais lidos e tirados através de testes
+int inferiorThreshold[8] = {2500, 1600, 1050, 1050, 1200, 1200, 1300, 3000};//Menores valores reais lidos e tirados através de testes
 
 int maiorBordaAnalog[2] = {4000, 4000};
 int menorBordaAnalog[2] = {1500, 1500};
