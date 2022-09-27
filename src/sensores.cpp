@@ -1,32 +1,12 @@
-/*  Sensores para sensores de borda e array de sensores e calibração dos mesmos
-    Por: Fidelis Melo Junior e Camila Couto
-*/
-
-//#Define------------------------------------------------------------------
-#define INVERTER 0  //se quiser inverter os sensor colocar 1 se não 0
-// Linha branca INVERTER = 0, linha preta INVERTER = 1
-
-#define BORDA_RC 1
-#define BORDA_RC_TIMEOUT 900
-#define divisor 7 // divisor da faixa que determina o threshold
-
-#define LED_L1 PB12
-#define LED_L2 PB0
-#define LED_L3 PA9
-#define BOT1 PB3
-#define BOT2 PB4
-
-//#Header-------------------------------------------
-inline void sensorInit() __attribute__((always_inline));
-inline void sensorLer() __attribute__((always_inline));
+#include "./types.h"
+#include "../include/sensores.h"
 
 //Variáveis----------------------------------------------------------------
 
 const int sensorArrayPin[8] = {PA7, PA6, PA5, PA4, PA3, PA2, PA1, PA0};//matriz com os nossos 8 sensores de linha
 const int sensorBordaPin[2] = {PB10, PA8};
 
-const int sensorArrayErroConst[8] = { 3, 1.75, 1.75, 0.5, -0.5, 1.75, -1.75, -3};//posição dos sensores varia de 3 a -3
-float sensorArrayErro;
+const float sensorArrayErroConst[8] = { 3, 1.75, 1.75, 0.5, -0.5, 1.75, -1.75, -3};//posição dos sensores varia de 3 a -3
 
 int sensorArrayAnalog[8]; //Valor Lido do Array de sensores
 int sensorBordaAnalog[2]; //Valor Lido dos sensores de borda
@@ -34,37 +14,41 @@ int sensorBordaAnalog[2]; //Valor Lido dos sensores de borda
 int sensorBordaThreshold[2] = {300, 100}; //Valor de limiar dos sensores de borda
 
 int sensorArrayDig[8]; //Valor Lido do Array de sensores
-int sensorBordaDig[2]; //Valor Lido dos sensores de borda
+
 
 int contFalhasConsecutivas = 0;
 
 bool sCruzamento = 0;
 unsigned long int sCruzamentoTempo = 0;
 
+
 //Calibração
 
 //0bs: maior valor lido= preto; menor valor lido=branco; abaixo de 3100 é branco
 int maiorArrayAnalog[8] = {4200, 4200, 4200, 4200, 4200, 4200, 4200, 4200}; // Maior valor medido pelo array de sensores (valores já pré-determinados para evitar erros na falta da calibração)
 int menorArrayAnalog[8] = {900, 1500, 1500, 1500, 1500, 1500, 1500, 1500}; // Menor valor medido pelo array de sensores
-int superiorThreshold[] = {4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095};//Maiores valores reais lidos e tirados através de testes
-int inferiorThreshold[] = {400, 600, 600, 600, 600, 600, 600, 600};//Menores valores reais lidos e tirados através de testes
+int superiorThreshold[8] = {1000, 1700, 4095, 4095, 3300, 4095, 4095, 4095};//Maiores valores reais lidos e tirados através de testes
+int inferiorThreshold[8] = {2500, 1600, 1050, 1050, 1200, 1200, 1300, 3000};//Menores valores reais lidos e tirados através de testes
 
-int maiorBordaAnalog[] = {4000, 4000};
-int menorBordaAnalog[] = {1500, 1500};
-int superiorThresholdBorda[] = {300, 100};
-int inferiorThresholdBorda[] = {300, 100};
+int maiorBordaAnalog[2] = {4000, 4000};
+int menorBordaAnalog[2] = {1500, 1500};
+int superiorThresholdBorda[2] = {300, 100};
+int inferiorThresholdBorda[2] = {300, 100};
 
 int faixaLeituraArray[8];
 int faixaLeituraBorda[2];
 int faixaAtuacaoArray[8];
 int faixaAtuacaoBorda[2];
 int Calibrado = 0;
-int Iniciado = 0;
+
 
 unsigned short int sensorCalib[8][256];
 
+Sensores::Sensores () {
+
+}
 //Funções------------------------------------------------------------------
-inline void sensorInit() {
+void Sensores::sensorInit() {
   pinMode(sensorArrayPin[0], INPUT_ANALOG);
   pinMode(sensorArrayPin[1], INPUT_ANALOG);
   pinMode(sensorArrayPin[2], INPUT_ANALOG);
@@ -87,7 +71,7 @@ inline void sensorInit() {
 }
 
 // Calibração
-void sensorCalibrate() {
+void Sensores::sensorCalibrate() {
 
   digitalWrite(LED_L3, HIGH);                       // indicação do início da calibração
   delay(1000);
@@ -108,6 +92,11 @@ void sensorCalibrate() {
   for (int j = 0; j < 4000; j++) {
     for (int i = 0; i < 8; i++) {
       sensorArrayAnalog[i] = analogRead(sensorArrayPin[i]);
+      Serial.print("Sensor ");
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.println(sensorArrayAnalog[i]);
+
       if (sensorArrayAnalog[i] > maiorArrayAnalog[i]) {
         maiorArrayAnalog[i] = sensorArrayAnalog[i];
       }
@@ -160,7 +149,7 @@ void sensorCalibrate() {
     Serial.print(", ");
   }
   Serial.println("};");
-
+  delay(5000);
 
 }
 
@@ -170,12 +159,12 @@ int sii;//variavel usada para fazer a ontagem dos sensores
 unsigned long auxTemp;
 
 //----------------------- Leitura dos sensores----------------------
-inline void sensorLer() {
+void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
   sSoma = 0;
   sCont = 0;
   //Array
   for (sii = 0; sii < 8; sii++) {
-    Serial.println(sii);
+    //Serial.println(sii);
     //Serial.print(" : ");
     sensorArrayAnalog[sii] = analogRead(sensorArrayPin[sii]);
     /*sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
@@ -200,13 +189,20 @@ inline void sensorLer() {
     else {
       if ( sensorArrayAnalog[sii] > superiorThreshold[sii]) {
         sensorArrayDig[sii] = 0;
+        Serial.print("Sensor ");
+        Serial.print(sii);
+        Serial.print(" = ");
         Serial.println("PRETO");
       }
       if ( sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
         sensorArrayDig[sii] = 1;//se estiver no branco, é verdadeiro
+        Serial.print("Sensor ");
+        Serial.print(sii);
+        Serial.print(" = ");
         Serial.println("BRANCO");
       }
     }
+    //delay(500);
 
     //essa parte soma a posição dos sensores e descobre o valor de erro e é usado no PID
 
@@ -316,3 +312,4 @@ inline void sensorLer() {
 
 
 */
+
