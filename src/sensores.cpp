@@ -1,9 +1,8 @@
-#include "./types.h"
+#include "../include/types.h"
 #include "../include/sensores.h"
 
 //Variáveis----------------------------------------------------------------
 
-const int sensorArrayPin[8] = {PA7, PA6, PA5, PA4, PA3, PA2, PA1, PA0};//matriz com os nossos 8 sensores de linha
 const int sensorBordaPin[2] = {PB10, PA8};
 
 const float sensorArrayErroConst[8] = { 3, 1.75, 1.75, 0.5, -0.5, 1.75, -1.75, -3};//posição dos sensores varia de 3 a -3
@@ -44,19 +43,31 @@ int Calibrado = 0;
 
 unsigned short int sensorCalib[8][256];
 
+int sensorRead (int sensorNum) {
+  int valor1,valor2,valor3;
+  valor1 = 001 & sensorNum;
+  valor2 = ((010 & sensorNum) >> 1);
+  valor3 = ((100 & sensorNum) >> 2);
+
+  if(DEBUGMODE) {
+    Serial.print(valor3);
+    Serial.print(valor2);
+    Serial.print(valor1);
+  }
+  digitalWrite(inMux1, valor1 ? HIGH : LOW);
+  digitalWrite(inMux2, valor2 ? HIGH : LOW);
+  digitalWrite(inMux3, valor3 ? HIGH : LOW);
+  return analogRead(outMux);
+}
 Sensores::Sensores () {
 
 }
 //Funções------------------------------------------------------------------
 void Sensores::sensorInit() {
-  pinMode(sensorArrayPin[0], INPUT_ANALOG);
-  pinMode(sensorArrayPin[1], INPUT_ANALOG);
-  pinMode(sensorArrayPin[2], INPUT_ANALOG);
-  pinMode(sensorArrayPin[3], INPUT_ANALOG);
-  pinMode(sensorArrayPin[4], INPUT_ANALOG);
-  pinMode(sensorArrayPin[5], INPUT_ANALOG);
-  pinMode(sensorArrayPin[6], INPUT_ANALOG);
-  pinMode(sensorArrayPin[7], INPUT_ANALOG);
+  pinMode(inMux1, OUTPUT);
+  pinMode(inMux2, OUTPUT);
+  pinMode(inMux3, OUTPUT);
+  pinMode(outMux, INPUT_ANALOG);
   //pinMode(sensorArrayPin[8], INPUT_ANALOG);
   //pinMode(sensorArrayPin[9], INPUT_ANALOG);
 
@@ -91,7 +102,7 @@ void Sensores::sensorCalibrate() {
 
   for (int j = 0; j < 4000; j++) {
     for (int i = 0; i < 8; i++) {
-      sensorArrayAnalog[i] = analogRead(sensorArrayPin[i]);
+      sensorArrayAnalog[i] = sensorRead(i);
       Serial.print("Sensor ");
       Serial.print(i);
       Serial.print(": ");
@@ -105,7 +116,7 @@ void Sensores::sensorCalibrate() {
       }
     }
     for (int k = 0; k < 2; k++) {
-      sensorBordaAnalog[k] = analogRead(sensorBordaPin[k]);
+      sensorBordaAnalog[k] = sensorRead(k);
       if (sensorBordaAnalog[k] > maiorBordaAnalog[k]) {
         maiorBordaAnalog[k] = sensorBordaAnalog[k];
       }
@@ -166,7 +177,7 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
   for (sii = 0; sii < 8; sii++) {
     //Serial.println(sii);
     //Serial.print(" : ");
-    sensorArrayAnalog[sii] = analogRead(sensorArrayPin[sii]);
+    sensorArrayAnalog[sii] = sensorRead(sii);
     /*sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
       sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
       sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
