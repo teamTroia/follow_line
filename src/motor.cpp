@@ -1,6 +1,5 @@
-#include "./types.h"
+#include "../include/types.h"
 #include "../include/motor.h"
-#define NSLEEP PB5
 
 //Funções------------------------------------------
 Motor::Motor () {
@@ -16,7 +15,7 @@ void Motor::motorInit() {
   pinMode (MAIN2, OUTPUT);
   digitalWrite(MAIN1, LOW);
   digitalWrite(MAIN2, LOW);
-
+  delay(10);
   //Agora Liga a ponte H e esta pronta para usar :p
   digitalWrite(NSLEEP, LOW);
 

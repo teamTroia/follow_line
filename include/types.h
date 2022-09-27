@@ -21,5 +21,12 @@
 #define BOT1 PB3
 #define BOT2 PB4
 
+#define NSLEEP PB5
+
+#define inMux1 PB0
+#define inMux2 PB0
+#define inMux3 PB0
+#define outMux PB0
+
 #define dist_L 0.150 // distância entre rodas
 #define analogBat PA12   // Pino do leitor de bateria
