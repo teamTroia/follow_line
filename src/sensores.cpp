@@ -3,7 +3,7 @@
 
 //Variáveis----------------------------------------------------------------
 
-const int sensorArrayPin[8] = {PA7, PA6, PA5, PA4, PA3, PA2, PA1, PA0};//matriz com os nossos 8 sensores de linha
+//const int sensorArrayPin[8] = {PA7, PA6, PA5, PA4, PA3, PA2, PA1, PA0};//matriz com os nossos 8 sensores de linha
 const int sensorBordaPin[2] = {PB10, PA8};
 
 const float sensorArrayErroConst[8] = { 3, 1.75, 1.75, 0.5, -0.5, 1.75, -1.75, -3};//posição dos sensores varia de 3 a -3
@@ -49,16 +49,10 @@ Sensores::Sensores () {
 }
 //Funções------------------------------------------------------------------
 void Sensores::sensorInit() {
-  pinMode(sensorArrayPin[0], INPUT_ANALOG);
-  pinMode(sensorArrayPin[1], INPUT_ANALOG);
-  pinMode(sensorArrayPin[2], INPUT_ANALOG);
-  pinMode(sensorArrayPin[3], INPUT_ANALOG);
-  pinMode(sensorArrayPin[4], INPUT_ANALOG);
-  pinMode(sensorArrayPin[5], INPUT_ANALOG);
-  pinMode(sensorArrayPin[6], INPUT_ANALOG);
-  pinMode(sensorArrayPin[7], INPUT_ANALOG);
-  //pinMode(sensorArrayPin[8], INPUT_ANALOG);
-  //pinMode(sensorArrayPin[9], INPUT_ANALOG);
+  pinMode(MULTIPLEX_COM,INPUT_ANALOG );
+  pinMode(MULTIPLEX_SWITCH_A,  OUTPUT);
+  pinMode(MULTIPLEX_SWITCH_B,  OUTPUT);
+  pinMode(MULTIPLEX_SWITCH_C,OUTPUT);
 
   if (BORDA_RC) {
     pinMode(sensorBordaPin[0], INPUT);
@@ -68,6 +62,22 @@ void Sensores::sensorInit() {
     pinMode(sensorBordaPin[1], INPUT_ANALOG);
   }
   Serial.println("Sensores inicializados!");
+}
+
+int sensorRead (int sensorNum) {
+  
+  int valor1,valor2,valor3;
+  valor1 = 001 & sensorNum;
+  valor2 = ((010 & sensorNum) >> 1);
+  valor3 = ((100 & sensorNum) >> 2);
+    //Serial.print(valor3);
+    //Serial.print(valor2);
+    //Serial.print(valor1);
+  //}
+  digitalWrite(MULTIPLEX_SWITCH_A, valor1 ? HIGH : LOW);
+  digitalWrite(MULTIPLEX_SWITCH_B, valor2 ? HIGH : LOW);
+  digitalWrite(MULTIPLEX_SWITCH_C, valor3 ? HIGH : LOW);
+  return analogRead(MULTIPLEX_COM);
 }
 
 // Calibração
@@ -87,11 +97,11 @@ void Sensores::sensorCalibrate() {
     }
     Calibrado = 1;
   }
-  digitalWrite(LED_L3, LOW);                      //indicação do início da calibração
+  //digitalWrite(LED_L3, LOW);                      //indicação do início da calibração
 
   for (int j = 0; j < 4000; j++) {
     for (int i = 0; i < 8; i++) {
-      sensorArrayAnalog[i] = analogRead(sensorArrayPin[i]);
+      sensorArrayAnalog[i] = sensorRead(i);
       Serial.print("Sensor ");
       Serial.print(i);
       Serial.print(": ");
@@ -166,7 +176,7 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
   for (sii = 0; sii < 8; sii++) {
     //Serial.println(sii);
     //Serial.print(" : ");
-    sensorArrayAnalog[sii] = analogRead(sensorArrayPin[sii]);
+    sensorArrayAnalog[sii] = analogRead(sensorRead(sii));
     /*sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
       sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
       sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
@@ -189,17 +199,17 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
     else {
       if ( sensorArrayAnalog[sii] > superiorThreshold[sii]) {
         sensorArrayDig[sii] = 0;
-        Serial.print("Sensor ");
+       /* Serial.print("Sensor ");
         Serial.print(sii);
         Serial.print(" = ");
-        Serial.println("PRETO");
+        Serial.println("PRETO");*/
       }
       if ( sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
         sensorArrayDig[sii] = 1;//se estiver no branco, é verdadeiro
-        Serial.print("Sensor ");
+        /*Serial.print("Sensor ");
         Serial.print(sii);
         Serial.print(" = ");
-        Serial.println("BRANCO");
+        Serial.println("BRANCO");*/
       }
     }
     //delay(500);
@@ -312,4 +322,3 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
 
 
 */
-
