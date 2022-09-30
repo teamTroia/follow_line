@@ -7,6 +7,6 @@ class Sensores {
   public:
     Sensores();
     void sensorInit();
-    void sensorLer(float &sensorArrayErro, int sensorBordaDig[]);
+    void sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]);
     void sensorCalibrate();
 };

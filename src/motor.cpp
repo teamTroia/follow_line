@@ -1,6 +1,6 @@
 #include "./types.h"
 #include "../include/motor.h"
-#define NSLEEP PB5
+//#define NSLEEP PB5
 
 //Funções------------------------------------------
 Motor::Motor () {
@@ -8,17 +8,11 @@ Motor::Motor () {
 }
 
 void Motor::motorInit() {
-  //Primeiro jogar o Nsleep p alto, isso ira desligar a ponte H
-  pinMode (NSLEEP, OUTPUT);
-  digitalWrite(NSLEEP, HIGH);
-  //Jogar os dois pinos de entrada do motor A para nivel baixo
+  
   pinMode (MAIN1, OUTPUT);
   pinMode (MAIN2, OUTPUT);
   digitalWrite(MAIN1, LOW);
   digitalWrite(MAIN2, LOW);
-
-  //Agora Liga a ponte H e esta pronta para usar :p
-  digitalWrite(NSLEEP, LOW);
 
   pinMode (MAIN1, PWM); // As variáveis IN são para acionamento do TLE, logo são saídas.(OUTPUT).
   pinMode (MAIN2, PWM);
@@ -30,7 +24,6 @@ void Motor::motorInit() {
   pwmWrite(MBIN1, 0);
   pwmWrite(MBIN2, 0);
 
-  //Serial.println("Motores inicializados!");
 }
 
 void Motor::stop_MotorA() {
@@ -77,7 +70,7 @@ void Motor::set_MotorB(int vel) {
 
 void Motor::motorSetVel(int vel1, int vel2) {
   set_MotorA(vel1);
-  //Serial.print(vel1);
+  Serial.print(vel1);
   set_MotorB(vel2);
-  //Serial.print(vel2);
+  Serial.print(vel2);
 }

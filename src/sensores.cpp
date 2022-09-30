@@ -50,8 +50,8 @@ Sensores::Sensores () {
 //Funções------------------------------------------------------------------
 void Sensores::sensorInit() {
   pinMode(MULTIPLEX_COM,INPUT_ANALOG );
-  pinMode(MULTIPLEX_SWITCH_A,  OUTPUT);
-  pinMode(MULTIPLEX_SWITCH_B,  OUTPUT);
+  pinMode(MULTIPLEX_SWITCH_A, OUTPUT);
+  pinMode(MULTIPLEX_SWITCH_B, OUTPUT);
   pinMode(MULTIPLEX_SWITCH_C,OUTPUT);
 
   if (BORDA_RC) {
@@ -169,7 +169,9 @@ int sii;//variavel usada para fazer a ontagem dos sensores
 unsigned long auxTemp;
 
 //----------------------- Leitura dos sensores----------------------
-void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
+void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
+  float sensorArrayErro = *sensorArrayErroptr;
+  
   sSoma = 0;
   sCont = 0;
   //Array

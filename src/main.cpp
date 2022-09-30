@@ -1,4 +1,4 @@
- #include <Arduino.h>
+#include <Arduino.h>
  #include "../include/types.h"
  #include "../include/motor.h"
  #include "../include/sensores.h"
@@ -145,17 +145,17 @@ void loop() {
       Serial.println("calibrando...");
       Iniciado = 1;
     }
-  }
-  sensor.sensorLer(sensorArrayErro, sensorBordaDig);
+  } 
+  //sensor.sensorLer(sensorArrayErro, sensorBordaDig);
   
-  Serial3.print(senStarStop); Serial3.print(" ,"); 
-  Serial3.println(senCurva);
+  /*Serial3.print(senStarStop); Serial3.print(" ,"); 
+  Serial3.println(senCurva);*/
   
   // Sensores de Borda ----------------------------------------------
   
 //sensor esquerdo apos detectar 2 marcas brancas, faz o robô parar
   
-  senCurvaAnt = senCurva;
+  /*senCurvaAnt = senCurva;
   if (sensorBordaDig[1] != senCurva) {
     senCurvaCont++;
     if (senCurvaCont >= 3) { //só deixa o sensor mudar o estado depois de detectar o preto ou o branco 2 vezes
@@ -203,7 +203,7 @@ void loop() {
  
   if (senCurva == 1 || senStarStop == 1) {
     digitalWrite(LED_L1, HIGH);
-  } else digitalWrite(LED_L1, LOW);
+  } else digitalWrite(LED_L1, LOW);*/
   //    Buzzer(senCurva || senStarStop); // Buzzer soa enquanto os sensores de borda estiverem detectando a linha
 
   // Início ---------------------------------------------------------------------------------------------------------------------------------------------------------
