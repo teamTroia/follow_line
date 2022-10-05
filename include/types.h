@@ -1,9 +1,9 @@
 #include <Arduino.h>
 
 #define MAIN1 PA1
-#define MAIN2 PB0
+#define MAIN2 PA2
 #define MBIN1 PA7 
-#define MBIN2 PA2
+#define MBIN2 PB0
 
 #define MAXVELA 5
 #define MAXVELB 5
@@ -18,7 +18,7 @@
 //MULTIPLEXDOR (SENSORES)
 #define inMux1 PA10
 #define inMux2 PA9
-#define inMux3 PA13
+#define inMux3 PB13
 #define outMux PA0
 
 #define LED_L1 PB12
@@ -30,4 +30,4 @@
 #define dist_L 0.150 // distância entre rodas
 #define analogBat PA12   // Pino do leitor de bateria
 
-#define DEBUGMODE true
+#define DEBUGMODE false

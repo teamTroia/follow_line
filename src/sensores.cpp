@@ -97,8 +97,9 @@ void Sensores::sensorCalibrate() {
       menorBordaAnalog[i] = 10000;
     }
     Calibrado = 1;
-  }
   digitalWrite(LED_L3, LOW);                      //indicação do início da calibração
+
+  }
 
   for (int j = 0; j < 4000; j++) {
     for (int i = 0; i < 8; i++) {
@@ -144,9 +145,7 @@ void Sensores::sensorCalibrate() {
     superiorThresholdBorda[H] = maiorArrayAnalog[H] - (faixaAtuacaoBorda[H]);
     inferiorThresholdBorda[H] = menorArrayAnalog[H] + (4 * faixaAtuacaoBorda[H]);
   }
-  digitalWrite(LED_L3, HIGH);
-  delay(1000);
-  digitalWrite(LED_L3, LOW);                      // indicação do fim da calibração
+                       // indicação do fim da calibração
   
   Serial.print("superiorThreshold[] = {");
   for (int L = 0; L < 8; L++) {
