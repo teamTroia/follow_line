@@ -116,7 +116,7 @@ void Sensores::sensorCalibrate() {
       }
     }
     for (int k = 0; k < 2; k++) {
-      sensorBordaAnalog[k] = sensorRead(k);
+      sensorBordaAnalog[k] = analogRead(sensorBordaPin[k]);
       if (sensorBordaAnalog[k] > maiorBordaAnalog[k]) {
         maiorBordaAnalog[k] = sensorBordaAnalog[k];
       }
@@ -170,7 +170,8 @@ int sii;//variavel usada para fazer a ontagem dos sensores
 unsigned long auxTemp;
 
 //----------------------- Leitura dos sensores----------------------
-void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
+void Sensores::sensorLer(float *sensorArrayErroPtr, int sensorBordaDig[]) {
+  float sensorArrayErro = *sensorArrayErroPtr;
   sSoma = 0;
   sCont = 0;
   //Array

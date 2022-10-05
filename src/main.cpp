@@ -146,7 +146,7 @@ void loop() {
       Iniciado = 1;
     }
   }
-  sensor.sensorLer(sensorArrayErro, sensorBordaDig);
+  sensor.sensorLer(&sensorArrayErro, sensorBordaDig);
   
   Serial3.print(senStarStop); Serial3.print(" ,"); 
   Serial3.println(senCurva);
