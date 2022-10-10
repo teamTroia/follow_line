@@ -70,10 +70,7 @@ int sensorRead (int sensorNum) {
   valor1 = 001 & sensorNum;
   valor2 = ((010 & sensorNum) >> 1);
   valor3 = ((100 & sensorNum) >> 2);
-    //Serial.print(valor3);
-    //Serial.print(valor2);
-    //Serial.print(valor1);
-  //}
+
   digitalWrite(MULTIPLEX_SWITCH_A, valor1 ? HIGH : LOW);
   digitalWrite(MULTIPLEX_SWITCH_B, valor2 ? HIGH : LOW);
   digitalWrite(MULTIPLEX_SWITCH_C, valor3 ? HIGH : LOW);
@@ -160,7 +157,6 @@ void Sensores::sensorCalibrate() {
   }
   Serial.println("};");
   delay(5000);
-
 }
 
 int sCont;//contador 
@@ -170,23 +166,12 @@ unsigned long auxTemp;
 
 //----------------------- Leitura dos sensores----------------------
 void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
-  
   sSoma = 0;
   sCont = 0;
   //Array
   for (sii = 0; sii < 8; sii++) {
-    //Serial.println(sii);
-    //Serial.print(" : ");
     sensorArrayAnalog[sii] = analogRead(sensorRead(sii));
-    /*sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
-      sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
-      sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
-      sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
-      sensorArrayAnalog[sii]  = sensorArrayAnalog[sii] / 5;
-    */
-    // Analogico para para digital do array- Ibterpretação dos valores lidos (definindo se é preto ou se é branco)
 
-    
     if (INVERTER) {//como foi declarado INVERTER, vamos declarar como verdadeiro se está no preto
       if (sensorArrayDig[sii] == 0 && sensorArrayAnalog[sii] > superiorThreshold[sii]) {
         sensorArrayDig[sii] = 1;//VERDADEIRO, é preto
@@ -200,23 +185,14 @@ void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
     else {
       if ( sensorArrayAnalog[sii] > superiorThreshold[sii]) {
         sensorArrayDig[sii] = 0;
-       /* Serial.print("Sensor ");
-        Serial.print(sii);
-        Serial.print(" = ");
-        Serial.println("PRETO");*/
       }
       if ( sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
-        sensorArrayDig[sii] = 1;//se estiver no branco, é verdadeiro
-        /*Serial.print("Sensor ");
-        Serial.print(sii);
-        Serial.print(" = ");
-        Serial.println("BRANCO");*/
+        sensorArrayDig[sii] = 1;
       }
     }
     //delay(500);
 
     //essa parte soma a posição dos sensores e descobre o valor de erro e é usado no PID
-
     if (sensorArrayDig[sii]) {
       sSoma += sensorArrayErroConst[sii];
       sCont++;
@@ -238,9 +214,10 @@ void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
     }
   }
 
-/*--------------------------------------------------------------------------------*/
+ /*--------------------------------------------------------------------------------*/
   // Cruzamento
-  if (sCont > 5) {
+  #warning ("CRUZAMENTO DETECTADO PELO NUMERO DE SENSORES DO ARRAY QUE DETECTAM BRANCO, VERIFICAR SE AINDA FUNCIONA NA PLACA NOVA")
+  if (sCont > 5) { 
     sCruzamento = 1;
     sCruzamentoTempo = millis();
   }
@@ -254,20 +231,15 @@ void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
     sensorBordaAnalog[1] = 0;
     sensorBordaDig[0] = 0;
     sensorBordaDig[1] = 0;
-  }
 
-  /*leitura DIGITAL dos sensores de BORDA*/
-  
-  else if (BORDA_RC) {
+  } else if (BORDA_RC) { /*leitura DIGITAL dos sensores de BORDA*/
     pinMode(sensorBordaPin[0], OUTPUT);
     pinMode(sensorBordaPin[1], OUTPUT);
     digitalWrite(sensorBordaPin[0], HIGH);
     digitalWrite(sensorBordaPin[1], HIGH);
     auxTemp = micros();
     while ((micros() - auxTemp) < 10); // Esperar por 10us
-    // Sensor 0
-   
-    
+       
     sensorBordaAnalog[0] = 0;
     sensorBordaAnalog[1] = 0;
     auxTemp = micros();
@@ -284,17 +256,9 @@ void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
 
     if (sensorBordaAnalog[0] == 0) sensorBordaAnalog[0] = 65535;//TA FALANDO QUE SE A LEITURA FOR FALSA, TA NO PRETO; 65535 é o PWM em binário
     if (sensorBordaAnalog[1] == 0) sensorBordaAnalog[1] = 65535;
-    // Serial.println("bordA 1: ");
-    /*Serial.print(sensorBordaAnalog[0]);
-     Serial.println("");
-      Serial.println("bordA 2: ");
-    Serial.print(sensorBordaAnalog[1]);
-    //Serial.println("");*/
-   
 
     sensorBordaDig[0] = (sensorBordaAnalog[0] < sensorBordaThreshold[0]);
     sensorBordaDig[1] = (sensorBordaAnalog[1] < sensorBordaThreshold[1]);
-
   } else {
     sensorBordaAnalog[0] = analogRead(sensorBordaPin[0]);
     sensorBordaAnalog[1] = analogRead(sensorBordaPin[1]);

@@ -8,8 +8,9 @@
 #define MAXVELA 5
 #define MAXVELB 5
 
-#define INVERTER 0  //se quiser inverter os sensor colocar 1 se não 0
-// Linha branca INVERTER = 0, linha preta INVERTER = 1
+#define INVERTER false
+// Linha branca INVERTER = false
+// linha preta  INVERTER = true
 
 #define BORDA_RC 1
 #define BORDA_RC_TIMEOUT 900
