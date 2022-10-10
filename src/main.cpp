@@ -68,10 +68,10 @@ Sensores sensor = Sensores();
 
 int Iniciado = 0;
 int sensorBordaDig[2]; //Valor Lido dos sensores de borda
-float sensorArrayErro;
+float* sensorArrayErro;
 
 void setup() {
-
+  sensorArrayErro = new float;
   /*afio_remap(AFIO_REMAP_TIM3_PARTIAL);// tem q add isso no código tbm, no caso da PB5
   afio_remap(AFIO_REMAP_TIM2_PARTIAL_2);//PB11*/
   motor.motorInit();
@@ -146,7 +146,7 @@ void loop() {
       Iniciado = 1;
     }
   } 
-  //sensor.sensorLer(sensorArrayErro, sensorBordaDig);
+  sensor.sensorLer(sensorArrayErro, sensorBordaDig);
   
   /*Serial3.print(senStarStop); Serial3.print(" ,"); 
   Serial3.println(senCurva);*/
@@ -213,7 +213,7 @@ void loop() {
 
     if (micros() - T_Sen_0 >= 2000) {
       ErSen_0 = ErSen;
-      ErSen =  sensorArrayErro;
+      ErSen =  *sensorArrayErro;
 
 
       if (millis() - T_Parada <= 20000) {

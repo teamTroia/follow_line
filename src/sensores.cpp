@@ -170,7 +170,6 @@ unsigned long auxTemp;
 
 //----------------------- Leitura dos sensores----------------------
 void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
-  float sensorArrayErro = *sensorArrayErroptr;
   
   sSoma = 0;
   sCont = 0;
@@ -226,16 +225,16 @@ void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
   // Calcular erro e verificar se perder a faixa no array
   
   if (sCont > 0 && sCont <= 4) {
-    sensorArrayErro = sSoma / float(sCont);
+    *sensorArrayErroptr = sSoma / float(sCont);
     contFalhasConsecutivas = 0;
   } else if (sCont > 4) {
-    sensorArrayErro = sensorArrayErro;
+    *sensorArrayErroptr = *sensorArrayErroptr;
     contFalhasConsecutivas = 0;
   } else {
     contFalhasConsecutivas++;
     if (contFalhasConsecutivas > 10) {
-      if (sensorArrayErro < 0) sensorArrayErro = -4;// o follow está posicionado mais para o lado (t???)
-      if (sensorArrayErro > 0) sensorArrayErro =  4;// o follow está posicionado mais para o lado (t???)
+      if (*sensorArrayErroptr < 0) *sensorArrayErroptr = -4;// o follow está posicionado mais para o lado (t???)
+      if (*sensorArrayErroptr > 0) *sensorArrayErroptr =  4;// o follow está posicionado mais para o lado (t???)
     }
   }
 
