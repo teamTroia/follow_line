@@ -170,7 +170,7 @@ void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
   sCont = 0;
   //Array
   for (sii = 0; sii < 8; sii++) {
-    sensorArrayAnalog[sii] = analogRead(sensorRead(sii));
+    sensorArrayAnalog[sii] = sensorRead(sii);
 
     if (INVERTER) {//como foi declarado INVERTER, vamos declarar como verdadeiro se está no preto
       if (sensorArrayDig[sii] == 0 && sensorArrayAnalog[sii] > superiorThreshold[sii]) {
@@ -185,9 +185,17 @@ void Sensores::sensorLer(float *sensorArrayErroptr, int sensorBordaDig[]) {
     else {
       if ( sensorArrayAnalog[sii] > superiorThreshold[sii]) {
         sensorArrayDig[sii] = 0;
+        Serial.print("Sensor ");
+        Serial.print(sii);
+        Serial.print(" = ");
+        Serial.println("PRETO");
       }
       if ( sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
-        sensorArrayDig[sii] = 1;
+        sensorArrayDig[sii] = 1;//se estiver no branco, é verdadeiro
+        Serial.print("Sensor ");
+        Serial.print(sii);
+        Serial.print(" = ");
+        Serial.println("BRANCO");
       }
     }
     //delay(500);
