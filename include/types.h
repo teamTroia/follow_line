@@ -1,9 +1,9 @@
 #include <Arduino.h>
 
-#define MAIN1 PA1
-#define MAIN2 PB0
-#define MBIN1 PA7 
-#define MBIN2 PA2
+#define MAIN1 PA2
+#define MAIN2 PA1
+#define MBIN1 PB0
+#define MBIN2 PA7
 
 #define MAXVELA 5
 #define MAXVELB 5
@@ -19,7 +19,7 @@
 //MULTIPLEXDOR (SENSORES)
 #define MULTIPLEX_SWITCH_A PA10
 #define MULTIPLEX_SWITCH_B PA9
-#define MULTIPLEX_SWITCH_C PA13
+#define MULTIPLEX_SWITCH_C PB13
 #define MULTIPLEX_COM PA0
 
 #define LED_L1 PB12

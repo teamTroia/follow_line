@@ -254,7 +254,7 @@ void loop() {
       // if (Trecho == 0) {
       //   motorSetVel(Uv[0] * 0.2 * 65535, Uv[1] * 0.2 * 65535);
       // }else
-      motor.motorSetVel(Uv[0] * 2000, Uv[1] * 2000);
+      motor.motorSetVel(Uv[0] * 800, Uv[1] * 800);
     }
   } else {
     Trecho = 0;

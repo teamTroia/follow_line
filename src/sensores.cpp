@@ -123,7 +123,7 @@ void Sensores::sensorCalibrate() {
 
     delay(1);
     if (j % 80 == 0) {
-      digitalWrite(LED_L1, !digitalRead (LED_L1));                      // LED piscando durante a calibração
+      digitalWrite(LED_L3, !digitalRead (LED_L3));                      // LED piscando durante a calibração
     }
   }
 
