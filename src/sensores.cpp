@@ -46,16 +46,10 @@ unsigned short int sensorCalib[8][256];
 
 int sensorRead (int sensorNum) {
   bitset<3> sensorInverso = ~ (bitset<3>(sensorNum));
-  bitset<3> valor1;
-  bitset<3> valor2;
-  bitset<3> valor3;
-  valor1 = bitset<3>(1) & bitset<3>(sensorInverso);
-  valor2 = ((bitset<3>(2) & bitset<3>(sensorInverso)) >> 1);
-  valor3 = ((bitset<3>(4) & bitset<3>(sensorInverso)) >> 2);
 
-  digitalWrite(inMux1, valor1.test(0) ? HIGH : LOW);
-  digitalWrite(inMux2, valor2.test(0) ? HIGH : LOW);
-  digitalWrite(inMux3, valor3.test(0) ? HIGH : LOW);
+  digitalWrite(inMux1, sensorInverso.test(0) ? HIGH : LOW);
+  digitalWrite(inMux2, sensorInverso.test(1) ? HIGH : LOW);
+  digitalWrite(inMux3, sensorInverso.test(2) ? HIGH : LOW);
   return analogRead(outMux);
 }
 Sensores::Sensores () {
