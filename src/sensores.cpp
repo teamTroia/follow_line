@@ -1,5 +1,6 @@
 #include "../include/types.h"
 #include "../include/sensores.h"
+#include <bitset>
 
 //Variáveis----------------------------------------------------------------
 
@@ -44,19 +45,17 @@ int Calibrado = 0;
 unsigned short int sensorCalib[8][256];
 
 int sensorRead (int sensorNum) {
-  int valor1,valor2,valor3;
-  valor1 = 001 & sensorNum;
-  valor2 = ((010 & sensorNum) >> 1);
-  valor3 = ((100 & sensorNum) >> 2);
+  bitset<3> sensorInverso = ~ (bitset<3>(sensorNum));
+  bitset<3> valor1;
+  bitset<3> valor2;
+  bitset<3> valor3;
+  valor1 = bitset<3>(1) & bitset<3>(sensorInverso);
+  valor2 = ((bitset<3>(2) & bitset<3>(sensorInverso)) >> 1);
+  valor3 = ((bitset<3>(4) & bitset<3>(sensorInverso)) >> 2);
 
-  if(DEBUGMODE) {
-    Serial.print(valor3);
-    Serial.print(valor2);
-    Serial.print(valor1);
-  }
-  digitalWrite(inMux1, valor1 ? HIGH : LOW);
-  digitalWrite(inMux2, valor2 ? HIGH : LOW);
-  digitalWrite(inMux3, valor3 ? HIGH : LOW);
+  digitalWrite(inMux1, valor1.test(0) ? HIGH : LOW);
+  digitalWrite(inMux2, valor2.test(0) ? HIGH : LOW);
+  digitalWrite(inMux3, valor3.test(0) ? HIGH : LOW);
   return analogRead(outMux);
 }
 Sensores::Sensores () {
