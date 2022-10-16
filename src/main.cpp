@@ -332,7 +332,7 @@ void loop() {
       //        if (Trecho == 0) {
       //          motorSetVel(Uv[0] * 0.2 * 65535, Uv[1] * 0.2 * 65535);
       //        }else
-     motor.motorSetVel(Uv[0] * 600, Uv[1] * 885);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
+     motor.motorSetVel(Uv[0] * 600, Uv[1] * 985);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
       //porque o Uv foi calcula pra ser um valor entre 0 e 1; quebrado (double)
     
     }
