@@ -1,19 +1,26 @@
 #include "./types.h"
 #include "../include/sensores.h"
+#include <SoftwareSerial.h>
 
 //Variáveis----------------------------------------------------------------
 
-const int sensorArrayPin[8] = {PA7, PA6, PA5, PA4, PA3, PA2, PA1, PA0};//matriz com os nossos 8 sensores de linha
+const int sensorArrayPin[6] = {PA0, PA3, PA4, PA5, PA6, PB1};//matriz com os nossos 8 sensores de linha
 const int sensorBordaPin[2] = {PB10, PA8};
 
-const float sensorArrayErroConst[8] = { 3, 1.75, 1.75, 0.5, -0.5, 1.75, -1.75, -3};//posição dos sensores varia de 3 a -3
+const float sensorArrayErroConst[6] = {-1.75, -1.75, 0.5, 0.5, -1.75, 1.75};//posição dos sensores varia de 3 a -3
 
-int sensorArrayAnalog[8]; //Valor Lido do Array de sensores
+int sensorArrayAnalog[6]; //Valor Lido do Array de sensores
 int sensorBordaAnalog[2]; //Valor Lido dos sensores de borda
 
 int sensorBordaThreshold[2] = {300, 100}; //Valor de limiar dos sensores de borda
 
-int sensorArrayDig[8]; //Valor Lido do Array de sensores
+
+int maiorBordaAnalog[2] = {4000, 4000};
+int menorBordaAnalog[2] = {1500, 1500};
+
+//int sensorBordaThreshold[2] = {300, 100}; //Valor de limiar dos sensores de borda
+
+int sensorArrayDig[6]; //Valor Lido do Array de sensores
 
 
 int contFalhasConsecutivas = 0;
@@ -25,27 +32,26 @@ unsigned long int sCruzamentoTempo = 0;
 //Calibração
 
 //0bs: maior valor lido= preto; menor valor lido=branco; abaixo de 3100 é branco
-int maiorArrayAnalog[8] = {4200, 4200, 4200, 4200, 4200, 4200, 4200, 4200}; // Maior valor medido pelo array de sensores (valores já pré-determinados para evitar erros na falta da calibração)
-int menorArrayAnalog[8] = {900, 1500, 1500, 1500, 1500, 1500, 1500, 1500}; // Menor valor medido pelo array de sensores
-int superiorThreshold[8] = {1000, 1700, 4095, 4095, 3300, 4095, 4095, 4095};//Maiores valores reais lidos e tirados através de testes
-int inferiorThreshold[8] = {2500, 1600, 1050, 1050, 1200, 1200, 1300, 3000};//Menores valores reais lidos e tirados através de testes
+int maiorArrayAnalog[6] = {4200, 4200, 4200, 4200, 4200, 4200}; // Maior valor medido pelo array de sensores (valores já pré-determinados para evitar erros na falta da calibração)
+int menorArrayAnalog[6] = {1500, 1500, 1500, 1500, 1500, 1500}; // Menor valor medido pelo array de sensores
+int superiorThreshold[6] = {3685, 3688, 3721, 3750, 3772, 3766};//Maiores valores reais lidos e tirados através de testes
+int inferiorThreshold[6] = {3150, 3166, 3239, 3302, 3364, 3343};//s valores reais lidos e tirados através de testes
 
-int maiorBordaAnalog[2] = {4000, 4000};
-int menorBordaAnalog[2] = {1500, 1500};
+//int maiorBordaAnalog[2] = {4000, 4000};
+//int menorBordaAnalog[2] = {1500, 1500};
 int superiorThresholdBorda[2] = {300, 100};
 int inferiorThresholdBorda[2] = {300, 100};
 
-int faixaLeituraArray[8];
+int faixaLeituraArray[6];
 int faixaLeituraBorda[2];
-int faixaAtuacaoArray[8];
+int faixaAtuacaoArray[6];
 int faixaAtuacaoBorda[2];
 int Calibrado = 0;
 
 
-unsigned short int sensorCalib[8][256];
+unsigned short int sensorCalib[6][256];
 
 Sensores::Sensores () {
-
 }
 //Funções------------------------------------------------------------------
 void Sensores::sensorInit() {
@@ -55,8 +61,7 @@ void Sensores::sensorInit() {
   pinMode(sensorArrayPin[3], INPUT_ANALOG);
   pinMode(sensorArrayPin[4], INPUT_ANALOG);
   pinMode(sensorArrayPin[5], INPUT_ANALOG);
-  pinMode(sensorArrayPin[6], INPUT_ANALOG);
-  pinMode(sensorArrayPin[7], INPUT_ANALOG);
+
   //pinMode(sensorArrayPin[8], INPUT_ANALOG);
   //pinMode(sensorArrayPin[9], INPUT_ANALOG);
 
@@ -77,7 +82,7 @@ void Sensores::sensorCalibrate() {
   delay(1000);
 
   if (Calibrado == 0) {
-    for (int i = 0; i < 8; i++) {                   // "zerando" valores dos sensores para adquirir novos sem limitações, apenas na primeira calibração,
+    for (int i = 0; i < 6; i++) {                   // "zerando" valores dos sensores para adquirir novos sem limitações, apenas na primeira calibração,
       maiorArrayAnalog[i] = 0;                      // nas seguintes o valor será apenas atualizado
       menorArrayAnalog[i] = 10000;
     }
@@ -90,7 +95,7 @@ void Sensores::sensorCalibrate() {
   digitalWrite(LED_L3, LOW);                      //indicação do início da calibração
 
   for (int j = 0; j < 4000; j++) {
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 6; i++) {
       sensorArrayAnalog[i] = analogRead(sensorArrayPin[i]);
       Serial.print("Sensor ");
       Serial.print(i);
@@ -116,11 +121,11 @@ void Sensores::sensorCalibrate() {
 
     delay(1);
     if (j % 80 == 0) {
-      digitalWrite(LED_L1, !digitalRead (LED_L1));                      // LED piscando durante a calibração
+      digitalWrite(LED_L3, !digitalRead (LED_L3));                      // LED piscando durante a calibração
     }
   }
 
-  for (int L = 0; L < 8; L++) {
+  for (int L = 0; L < 6; L++) {
     faixaLeituraArray[L] = maiorArrayAnalog[L] - menorArrayAnalog[L];            // definição da faixa de valores colhidos
     faixaAtuacaoArray[L] = (faixaLeituraArray[L]) / divisor;                     // divisão da faixa para definição de limites
     superiorThreshold[L] = maiorArrayAnalog[L] - (faixaAtuacaoArray[L]);         // definição de limite superior (preto)
@@ -138,13 +143,13 @@ void Sensores::sensorCalibrate() {
   digitalWrite(LED_L3, LOW);                      // indicação do fim da calibração
   
   Serial.print("superiorThreshold[] = {");
-  for (int L = 0; L < 8; L++) {
+  for (int L = 0; L < 6; L++) {
     Serial.print(superiorThreshold[L]);
     Serial.print(", ");
   }
   Serial.println("};");
   Serial.print("inferiorThreshold[] = {");
-  for (int L = 0; L < 8; L++) {
+  for (int L = 0; L < 6; L++) {
     Serial.print(inferiorThreshold[L]);
     Serial.print(", ");
   }
@@ -163,10 +168,15 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
   sSoma = 0;
   sCont = 0;
   //Array
-  for (sii = 0; sii < 8; sii++) {
+  for (sii = 0; sii < 6; sii++) {
     //Serial.println(sii);
     //Serial.print(" : ");
     sensorArrayAnalog[sii] = analogRead(sensorArrayPin[sii]);
+    Serial.print(sii);
+    Serial.print(" : ");
+    Serial.println(sensorArrayAnalog[sii]);
+    //delay(250);
+    //Serial.bluetooth(analogRead(sensorArrayPin[sii]));
     /*sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
       sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
       sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
@@ -189,17 +199,19 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
     else {
       if ( sensorArrayAnalog[sii] > superiorThreshold[sii]) {
         sensorArrayDig[sii] = 0;
-        Serial.print("Sensor ");
+        /*Serial.print("Sensor ");
         Serial.print(sii);
         Serial.print(" = ");
         Serial.println("PRETO");
+        delay(250);*/
       }
       if ( sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
         sensorArrayDig[sii] = 1;//se estiver no branco, é verdadeiro
-        Serial.print("Sensor ");
+        /*Serial.print("Sensor ");
         Serial.print(sii);
         Serial.print(" = ");
         Serial.println("BRANCO");
+        delay(250);*/
       }
     }
     //delay(500);

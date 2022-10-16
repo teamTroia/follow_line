@@ -9,16 +9,16 @@ Motor::Motor () {
 
 void Motor::motorInit() {
   //Primeiro jogar o Nsleep p alto, isso ira desligar a ponte H
-  pinMode (NSLEEP, OUTPUT);
-  digitalWrite(NSLEEP, HIGH);
+ // pinMode (NSLEEP, OUTPUT);
+  //digitalWrite(NSLEEP, HIGH);
   //Jogar os dois pinos de entrada do motor A para nivel baixo
   pinMode (MAIN1, OUTPUT);
   pinMode (MAIN2, OUTPUT);
-  digitalWrite(MAIN1, LOW);
-  digitalWrite(MAIN2, LOW);
+  //digitalWrite(MAIN1, LOW);
+  //digitalWrite(MAIN2, LOW);
 
   //Agora Liga a ponte H e esta pronta para usar :p
-  digitalWrite(NSLEEP, LOW);
+  //digitalWrite(NSLEEP, LOW);
 
   pinMode (MAIN1, PWM); // As variáveis IN são para acionamento do TLE, logo são saídas.(OUTPUT).
   pinMode (MAIN2, PWM);

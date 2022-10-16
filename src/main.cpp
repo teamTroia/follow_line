@@ -14,11 +14,11 @@ char trechoTipo[] = { 'R', 'A','C','F','C','F','C','A' ,'C','F','C','A','C','A',
 //char trechoTipo[] = { 'R', 'A','C','F','C','F' ,'C','F','C','A','R'}; //oficial dia 1
 //char trechoTipo[] = { '1', '2','3','4','5','6' ,'7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29'}; //OFICIAL
 
-float KP_R = 0.7, // CORRIGE MAIS RÁPIDO MAS CAUSA INSTABILIDADE -------------- 0.6 ---- 0.7
+float KP_R = 0.6, // CORRIGE MAIS RÁPIDO MAS CAUSA INSTABILIDADE -------------- 0.6 ---- 0.7
       KI_R = 0.005, // CORRIGE NO LONGO TEMPO ---------------------------------- 0.01 --- 0.005
       KD_R = 0.4, // CORRIGE MAIS RÁPIDO ------------------------------------ 0.015 -- 0.00 
       Vel_R = 0.55, // -------------------------------------------------------- 0.05 --- 0.05
-      Vel_erro_R = 0.5; // ----------------esse de curva----------------------------------- 0.08 --- 0.15
+      Vel_erro_R = 0.05; // ----------------esse de curva----------------------------------- 0.08 --- 0.15
 
 float KP_c_aberta = 0.33,
       KI_c_aberta = 0.15,
@@ -332,7 +332,7 @@ void loop() {
       //        if (Trecho == 0) {
       //          motorSetVel(Uv[0] * 0.2 * 65535, Uv[1] * 0.2 * 65535);
       //        }else
-     motor.motorSetVel(Uv[0] * 2000, Uv[1] * 2000);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
+     motor.motorSetVel(Uv[0] * 600, Uv[1] * 885);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
       //porque o Uv foi calcula pra ser um valor entre 0 e 1; quebrado (double)
     
     }
