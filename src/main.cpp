@@ -10,7 +10,7 @@
 
 // PID --------------------------------------------------------------
 //char trechoTipo[] = { 'R', 'F','F','F','F','F' ,'R','A','R','A','R','A','R','A','R','F','R','F','R','A','R','A','R','A','R','A','R','A','R','A','R','A','R','A','R'}; //TREINO
-char trechoTipo[] = { 'R', 'A','C','F','C','F','C','A' ,'C','F','C','A','C','A','C','F','R','A','C','A','C','A','C','F','C','A','C','F','F','F','L'}; //oficial dia 1
+char trechoTipo[] = { 'R', 'F','C','F','C','F','C','A' ,'C','F','C','A','C','A','C','F','R','A','C','A','C','A','C','F','C','A','C','F','F','F','L'}; //oficial dia 1
 //char trechoTipo[] = { 'R', 'A','C','F','C','F' ,'C','F','C','A','R'}; //oficial dia 1
 //char trechoTipo[] = { '1', '2','3','4','5','6' ,'7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29'}; //OFICIAL
 
@@ -18,7 +18,7 @@ float KP_R = 0.6, // CORRIGE MAIS RÁPIDO MAS CAUSA INSTABILIDADE --------------
       KI_R = 0.005, // CORRIGE NO LONGO TEMPO ---------------------------------- 0.01 --- 0.005
       KD_R = 0.4, // CORRIGE MAIS RÁPIDO ------------------------------------ 0.015 -- 0.00 
       Vel_R = 0.55, // -------------------------------------------------------- 0.05 --- 0.05
-      Vel_erro_R = 0.05; // ----------------esse de curva----------------------------------- 0.08 --- 0.15
+      Vel_erro_R = 0.02; // ----------------esse de curva----------------------------------- 0.08 --- 0.15
 
 float KP_c_aberta = 0.33,
       KI_c_aberta = 0.15,
@@ -332,7 +332,7 @@ void loop() {
       //        if (Trecho == 0) {
       //          motorSetVel(Uv[0] * 0.2 * 65535, Uv[1] * 0.2 * 65535);
       //        }else
-     motor.motorSetVel(Uv[0] * 600, Uv[1] * 985);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
+     motor.motorSetVel(Uv[0] * 490, Uv[1] * 1130);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
       //porque o Uv foi calcula pra ser um valor entre 0 e 1; quebrado (double)
     
     }

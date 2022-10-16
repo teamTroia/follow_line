@@ -7,7 +7,7 @@
 const int sensorArrayPin[6] = {PA0, PA3, PA4, PA5, PA6, PB1};//matriz com os nossos 8 sensores de linha
 const int sensorBordaPin[2] = {PB10, PA8};
 
-const float sensorArrayErroConst[6] = {-1.75, -1.75, 0.5, 0.5, -1.75, 1.75};//posição dos sensores varia de 3 a -3
+const float sensorArrayErroConst[6] = {-1.75, -1.75, 0.5, 0.5, 1.75, 1.75};//posição dos sensores varia de 3 a -3
 
 int sensorArrayAnalog[6]; //Valor Lido do Array de sensores
 int sensorBordaAnalog[2]; //Valor Lido dos sensores de borda
