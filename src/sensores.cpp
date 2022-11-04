@@ -1,7 +1,9 @@
 #include "./types.h"
 #include "../include/sensores.h"
-#include <SoftwareSerial.h>
- SoftwareSerial bluetooth(PB7,PB6);
+//#include <SoftwareSerial.h>
+
+//SoftwareSerial bluetooth(PB7,PB6);
+
 
 //Variáveis----------------------------------------------------------------
 
@@ -40,9 +42,9 @@ int inferiorThreshold[6] = {3150, 3166, 3239, 3302, 3364, 3343};//s valores reai
 
 //int maiorBordaAnalog[2] = {4000, 4000};
 //int menorBordaAnalog[2] = {1500, 1500};
-int superiorThresholdBorda[2] = {2000, 2000};
-int inferiorThresholdBorda[2] = {300, 100};
-int sensorBordaThreshold[2]={2000, 2000};
+int superiorThresholdBorda[2] = {500, 500};
+int inferiorThresholdBorda[2] = {100, 100};
+int sensorBordaThreshold[2]={600, 600};
 
 int faixaLeituraArray[6];
 int faixaLeituraBorda[2];
@@ -63,7 +65,7 @@ void Sensores::sensorInit() {
   pinMode(sensorArrayPin[3], INPUT_ANALOG);
   pinMode(sensorArrayPin[4], INPUT_ANALOG);
   pinMode(sensorArrayPin[5], INPUT_ANALOG);
-  bluetooth.begin(9600);
+  //bluetooth.begin(9600);
   //pinMode(sensorArrayPin[8], INPUT_ANALOG);
   //pinMode(sensorArrayPin[9], INPUT_ANALOG);
 
@@ -287,12 +289,12 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
 
     if (sensorBordaAnalog[0] == 0) sensorBordaAnalog[0] = 65535;//TA FALANDO QUE SE A LEITURA FOR FALSA, TA NO PRETO; 65535 é o PWM em binário
     if (sensorBordaAnalog[1] == 0) sensorBordaAnalog[1] = 65535;
-     bluetooth.print("bordA 1: ");
+     /*bluetooth.print("bordA 1: ");
      bluetooth.print(sensorBordaAnalog[0]);
      bluetooth.println("");
      bluetooth.print("bordA 2: ");
      bluetooth.print(sensorBordaAnalog[1]);
-     bluetooth.println("");
+     bluetooth.println("");*/
    
 
     sensorBordaDig[0] = (sensorBordaAnalog[0] < sensorBordaThreshold[0]);
