@@ -2,6 +2,8 @@
  #include "../include/types.h"
  #include "../include/motor.h"
  #include "../include/sensores.h"
+ #include <SoftwareSerial.h>
+ SoftwareSerial bluetooth(PB7,PB6);
 
  /*  Pandemia-2020-2021
     Follow line utilizando STM32F103C8T6 - TROIA
@@ -9,8 +11,8 @@
 */
 
 // PID --------------------------------------------------------------
-//char trechoTipo[] = { 'R', 'F','F','F','F','F' ,'R','A','R','A','R','A','R','A','R','F','R','F','R','A','R','A','R','A','R','A','R','A','R','A','R','A','R','A','R'}; //TREINO
-char trechoTipo[] = { 'R', 'F','C','F','C','F','C','A' ,'C','F','C','A','C','A','C','F','R','A','C','A','C','A','C','F','C','A','C','F','F','F','L'}; //oficial dia 1
+char trechoTipo[] = { 'R', 'F','F','F','F','F' ,'R','A','R','A','R','A','R','A','R','F','R','F','R','A','R','A','R','A','R','A','R','A','R','A','R','A','R','A','R'}; //TREINO
+//char trechoTipo[] = { 'R', 'F','C','F','C','F','C','A' ,'C','F','C','A','C','A','C','F','R','A','C','A','C','A','C','F','C','A','C','F','F','F','L'}; //oficial dia 1
 //char trechoTipo[] = { 'R', 'A','C','F','C','F' ,'C','F','C','A','R'}; //oficial dia 1
 //char trechoTipo[] = { '1', '2','3','4','5','6' ,'7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29'}; //OFICIAL
 
@@ -83,6 +85,7 @@ void setup() {
   //pinMode(MOSFET, OUTPUT);
   //pinMode(BUZZER_PIN, OUTPUT);
   Serial3.begin(9600);
+  bluetooth.begin(9600);
   sensor.sensorInit();
 
   ErSen = ErSenInt = 0;
@@ -189,18 +192,12 @@ void loop() {
 
   }
 
-  if (StartStop == 2 and tempo>36000) { // número de marcações para parar
+  if (StartStop == 2) { // número de marcações para parar
     motor.stop_Motor();
     parou = 1;
     digitalWrite(LED_L3, HIGH);
   }
 
-  if (Trecho == 2 and tempo>36000) { // número de marcações para parar
-    motor.stop_Motor();
-    parou = 1;
-    digitalWrite(LED_L3, HIGH);
-  }
- 
   if (senCurva == 1 || senStarStop == 1) {
     digitalWrite(LED_L1, HIGH);
   } else digitalWrite(LED_L1, LOW);
@@ -220,17 +217,17 @@ void loop() {
         StartStop = 0;
       }
         
-
+     bluetooth.println(Trecho);
      // Trecho = 1;        // Teste ---------------------------------------------------
 
-      switch (trechoTipo[0]) {  //Voltar posição do vetor para variável Trecho
+      switch (trechoTipo[Trecho]) {  //Voltar posição do vetor para variável Trecho
 
         case 'A': // Curva aberta
           KPs = KP_c_aberta;
           KIs = KI_c_aberta;//0.000001 * 256;
           KDs = KD_c_aberta;//400 * 256;
           VELs = Vel_c_aberta*0.06;
-          VELerro = 0.7*Vel_erro_c_aberta;
+          VELerro = 0.08*Vel_erro_c_aberta;
           break;
 
        
@@ -332,7 +329,7 @@ void loop() {
       //        if (Trecho == 0) {
       //          motorSetVel(Uv[0] * 0.2 * 65535, Uv[1] * 0.2 * 65535);
       //        }else
-     motor.motorSetVel(Uv[0] * 490, Uv[1] * 1130);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
+     motor.motorSetVel(Uv[0] * 1130, Uv[1] * 1130);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
       //porque o Uv foi calcula pra ser um valor entre 0 e 1; quebrado (double)
     
     }

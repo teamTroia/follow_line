@@ -1,12 +1,12 @@
 #include <Arduino.h>
 
-#define MAIN1 PA1
-#define MAIN2 PA2
+#define MAIN1 PA2
+#define MAIN2 PA1
 #define MBIN1 PA7
 #define MBIN2 PB0
 
-#define MAXVELA 13
-#define MAXVELB 16.5
+#define MAXVELA 16//m1
+#define MAXVELB 13//m2
 
 #define INVERTER 0  //se quiser inverter os sensor colocar 1 se não 0
 // Linha branca INVERTER = 0, linha preta INVERTER = 1
