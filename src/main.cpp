@@ -23,16 +23,16 @@ float KP_R = 0.6, // CORRIGE MAIS RÁPIDO MAS CAUSA INSTABILIDADE --------------
       Vel_R = 0.2, // -------------------------------------------------------- 0.05 --- 0.05
       Vel_erro_R = 0.02; // ----------------esse de curva----------------------------------- 0.08 --- 0.15
 
-float KP_c_aberta = 0.7,
+float KP_c_aberta = 0.6,
       KI_c_aberta = 0.005,
       KD_c_aberta = 0.4,
-      Vel_c_aberta = 0.5,
+      Vel_c_aberta = 0.2,
       Vel_erro_c_aberta = 0.02;
 
-float KP_c_fechada = 0.7,
+float KP_c_fechada = 0.6,
       KI_c_fechada = 0.005,
       KD_c_fechada = 0.4,
-      Vel_c_fechada = 0.5,
+      Vel_c_fechada = 0.2,
       Vel_erro_c_fechada = 0.02;
 
 
