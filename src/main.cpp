@@ -192,13 +192,27 @@ void loop() {
   */
 
 //conforme o sensor direito vai detectando as marcas brancas, o "trecho" da pista vai mudando
+  if(sensorBordaDig[1]){
+    if(!sensorBordaDig[0]) {
+      if ((micros() - tempoLeituraBorda) >= 20) {
+        Trecho ++;
+        tempoLeituraBorda = micros();
+        Serial.println(Trecho);
+        ErSenInt = 0;
+      }
+    } else {
+      bluetooth.println("Cruzamento");
+    } 
+  }
 
-  if (senCurva == 1 && senCurvaAnt == 0) {
+  /*if (senCurva == 1 && senCurvaAnt == 0) {
     //Curva detectada;
     Trecho = Trecho + 1;
     ErSenInt = 0;
     // Acresentar Timer
-  }
+  }*/
+  
+  
   /*
   if (senStarStop == 1 && senStarStopAnt == 0) {
     //Start Stop detectado;
@@ -233,7 +247,7 @@ void loop() {
         
       //bluetooth.println(Trecho);
      // Trecho = 1;        // Teste ---------------------------------------------------
-      bluetooth.println("Trecho: ");
+      bluetooth.println(Trecho );
       bluetooth.println(trechoTipo[Trecho]);
       switch (trechoTipo[0]) {  //Voltar posição do vetor para variável Trecho
 
