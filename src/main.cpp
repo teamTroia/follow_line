@@ -191,22 +191,26 @@ void loop() {
 
     // conforme o sensor direito vai detectando as marcas brancas, o "trecho" da
     // pista vai mudando
+    // Serial.print("sensor 0:");
+    // Serial.println(sensorBordaDig[0]);
+    // Serial.print("sensor 1:");
+    // Serial.println(sensorBordaDig[1]);
     if (sensorBordaDig[1] && !sensorBordaDig[0]) {
-        if ((micros() - tempoLeituraBorda) >= 500) {
+        if ((micros() - tempoLeituraBorda) >= 900) {
             Trecho++;
             tempoLeituraTrecho = micros();
             Serial.print("Trecho: ");
             Serial.println(Trecho);
         }
     } else if (sensorBordaDig[1] && !sensorBordaDig[0]) {
-        if ((micros() - tempoLeituraTrecho) >= 500) {
+        if ((micros() - tempoLeituraTrecho) >= 900) {
             Serial.print("Start Stop");
             tempoLeituraBorda = micros();
             ErSenInt = 0;
         }
     } else if (sensorBordaDig[1] && sensorBordaDig[0]) {
         bluetooth.println("Cruzamento");
-        Serial.print("Cruzamento");
+        //Serial.print("Cruzamento");
     }
 
     /*if (senCurva == 1 && senCurvaAnt == 0) {

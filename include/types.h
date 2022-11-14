@@ -12,7 +12,7 @@
 // Linha branca INVERTER = 0, linha preta INVERTER = 1
 
 #define BORDA_RC 1
-#define BORDA_RC_TIMEOUT 900
+#define BORDA_RC_TIMEOUT 650
 #define divisor 7 // divisor da faixa que determina o threshold
 
 #define LED_L1 PB12
