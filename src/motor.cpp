@@ -1,6 +1,6 @@
 #include "./types.h"
 #include "../include/motor.h"
-#define NSLEEP PB5
+//#define NSLEEP PB5
 
 //Funções------------------------------------------
 Motor::Motor () {
@@ -12,34 +12,34 @@ void Motor::motorInit() {
  // pinMode (NSLEEP, OUTPUT);
   //digitalWrite(NSLEEP, HIGH);
   //Jogar os dois pinos de entrada do motor A para nivel baixo
-  pinMode (MAIN1, OUTPUT);
-  pinMode (MAIN2, OUTPUT);
+  //pinMode (MAIN1, OUTPUT);
+  //pinMode (MAIN2, OUTPUT);
   //digitalWrite(MAIN1, LOW);
   //digitalWrite(MAIN2, LOW);
 
   //Agora Liga a ponte H e esta pronta para usar :p
   //digitalWrite(NSLEEP, LOW);
 
-  pinMode (MAIN1, PWM); // As variáveis IN são para acionamento do TLE, logo são saídas.(OUTPUT).
-  pinMode (MAIN2, PWM);
-  pinMode (MBIN1, PWM);
-  pinMode (MBIN2, PWM);
+  pinMode (MAIN1, OUTPUT); // As variáveis IN são para acionamento do TLE, logo são saídas.(OUTPUT).
+  pinMode (MAIN2, OUTPUT);
+  pinMode (MBIN1, OUTPUT);
+  pinMode (MBIN2, OUTPUT);
 
-  pwmWrite(MAIN1, 0); // Todos os acionamentos são colocados em sinal baixo.
-  pwmWrite(MAIN2, 0);
-  pwmWrite(MBIN1, 0);
-  pwmWrite(MBIN2, 0);
+  analogWrite(MAIN1, 0); // Todos os acionamentos são colocados em sinal baixo.
+  analogWrite(MAIN2, 0);
+  analogWrite(MBIN1, 0);
+  analogWrite(MBIN2, 0);
 
   //Serial.println("Motores inicializados!");
 }
 
 void Motor::stop_MotorA() {
-  pwmWrite(MAIN1, 0);
-  pwmWrite(MAIN2, 0);
+  analogWrite(MAIN1, 0);
+  analogWrite(MAIN2, 0);
 }
 void Motor::stop_MotorB() {
-  pwmWrite(MBIN1, 0);
-  pwmWrite(MBIN2, 0);
+  analogWrite(MBIN1, 0);
+  analogWrite(MBIN2, 0);
 }
 
 void Motor::stop_Motor() {
@@ -49,29 +49,29 @@ void Motor::stop_Motor() {
 
 void Motor::set_MotorA(int vel) {
   if (vel > 0) {
-    pwmWrite(MAIN2, 0);
-    vel  = vel * MAXVELA *  6.5535;
-    if (vel > 65535) vel = 65535;
-    pwmWrite(MAIN1, vel);
+    analogWrite(MAIN2, 0);
+    vel  = vel * MAXVELA *  0.0255;
+    if (vel > 255) vel = 255;
+    analogWrite(MAIN1, vel);
   } else  {
-    pwmWrite(MAIN1, 0);
-    vel = -vel * MAXVELA * 6.5535;
-    if (vel > 65535) vel = 65535;
-    pwmWrite(MAIN2, vel);
+    analogWrite(MAIN1, 0);
+    vel = -vel * MAXVELA * 0.0255;
+    if (vel > 255) vel = 255;
+    analogWrite(MAIN2, vel);
   }
 }
 void Motor::set_MotorB(int vel) {
   if (vel > 0) {
-    pwmWrite(MBIN2, 0);
-    vel  = vel * MAXVELB *  6.5535;
-    if (vel > 65535)
-      vel = 65535;
-    pwmWrite(MBIN1, vel);
+    analogWrite(MBIN2, 0);
+    vel  = vel * MAXVELB *  0.0255;
+    if (vel > 255)
+      vel = 255;
+    analogWrite(MBIN1, vel);
   } else  {
-    pwmWrite(MBIN1, 0);
-    vel = -vel * MAXVELB * 6.5535;
-    if (vel > 65535) vel = 65535;
-    pwmWrite(MBIN2, vel);
+    analogWrite(MBIN1, 0);
+    vel = -vel * MAXVELB * 0.0255;
+    if (vel > 255) vel = 255;
+    analogWrite(MBIN2, vel);
   }
 }
 

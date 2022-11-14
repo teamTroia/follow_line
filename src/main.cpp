@@ -19,9 +19,9 @@ char trechoTipo[] = { 'R', 'A','C','F','C','F' ,'C','F','C','F','F','F','R','F',
 
 float KP_R = 0.6, // CORRIGE MAIS RÁPIDO MAS CAUSA INSTABILIDADE -------------- 0.6 ---- 0.7
       KI_R = 0.005, // CORRIGE NO LONGO TEMPO ---------------------------------- 0.01 --- 0.005
-      KD_R = 0.4, // CORRIGE MAIS RÁPIDO ------------------------------------ 0.015 -- 0.00// 0.4
+      KD_R = 0.1, // CORRIGE MAIS RÁPIDO ------------------------------------ 0.015 -- 0.00// 0.4
       Vel_R = 0.55, // -------------------------------------------------------- 0.05 --- 0.05
-      Vel_erro_R = 0.02; // ----------------esse de curva----------------------------------- 0.08 --- 0.15
+      Vel_erro_R = 0.029; // ----------------esse de curva----------------------------------- 0.08 --- 0.15
 
 float KP_c_aberta = 0.6,
       KI_c_aberta = 0.005,
@@ -32,7 +32,7 @@ float KP_c_aberta = 0.6,
 float KP_c_fechada = 0.6,
       KI_c_fechada = 0.005,
       KD_c_fechada = 0.4,
-      Vel_c_fechada = 0.1,
+      Vel_c_fechada = 0.2,
       Vel_erro_c_fechada = 0.02;
 
 
@@ -72,7 +72,7 @@ Sensores sensor = Sensores();
 int Iniciado = 0;
 int sensorBordaDig[2]; //Valor Lido dos sensores de borda
 float sensorArrayErro;
-
+double tempoLeituraBorda = 0;
 void setup() {
 
   /*afio_remap(AFIO_REMAP_TIM3_PARTIAL);// tem q add isso no código tbm, no caso da PB5
@@ -113,50 +113,43 @@ void loop() {
   //     Serial.println(digitalRead(BOT2));
   //     delay(3000);
   //   } 
-  char dadoBluetooth;
-  while ((!digitalRead(BOT2)) && (!Iniciado)) {
+  while ((!digitalRead(BOT2)) && (Iniciado == 0)) {
+    
+    digitalWrite(LED_L1, HIGH); //1
+    delay(50);
+    //digitalWrite(LED_L1, LOW);
+    delay(50);
+    digitalWrite(LED_L3, HIGH);
+    Serial.println("GO");
+    delay(50);
+    //digitalWrite(LED_L3, LOW);
 
     
     parou = 0;
+
     T_Sen_0 = T_Sen_1 = micros();
+
+    delay(100);
+    digitalWrite(LED_L1, HIGH); //1
+    digitalWrite(LED_L3, LOW);
+    delay(50);
+    digitalWrite(LED_L1, LOW); //1
+    digitalWrite(LED_L3, HIGH);
+    delay(50);
+    digitalWrite(LED_L1, HIGH); //1
+    digitalWrite(LED_L3, LOW);
+    delay(50);
+    digitalWrite(LED_L1, LOW); //1
+    digitalWrite(LED_L3, HIGH);
+    delay(50);
+
     T_Parada = millis();
-    Serial.println("Esperando inicio");
-    bluetooth.println("Esperando incio");
-    if(bluetooth.available()) {
-      Serial.println("Bluetooth ok");
-    } else {
-      Serial.println("Bluetooh foi de comes");
-    }
-    dadoBluetooth = bluetooth.read();
-
-    if(dadoBluetooth == 'A') {
-      
-      bluetooth.println("Editando Valores de Curva Aberta");
-      Vel_erro_c_aberta = bluetooth.read();
-      while (Vel_erro_c_aberta == -1) {
-        Vel_erro_c_aberta = bluetooth.read();
-      }
-      bluetooth.print("Novo valor: ");
-      bluetooth.println(Vel_erro_c_aberta);
-    } else if (dadoBluetooth == 'F') {
-      bluetooth.println("Editando Valores de Curva fechada");
-      Vel_erro_c_fechada = bluetooth.read();
-      while (Vel_erro_c_fechada == -1) {
-        Vel_erro_c_fechada = bluetooth.read();
-      }
-      bluetooth.print("Novo valor: ");
-      bluetooth.println(Vel_erro_c_fechada);
-    } else if (dadoBluetooth == 'Q') {
-      bluetooth.println("Quit from config mode");
-    }
-    
-
     if (digitalRead(BOT1)) {       //condição calibração
       sensor.sensorCalibrate();
       Serial.println("calibrando...");
+      Iniciado = 1;
     }
   }
-  Iniciado = 1;
   sensor.sensorLer(sensorArrayErro, sensorBordaDig);
   
   Serial3.print(senStarStop); Serial3.print(" ,"); 
@@ -175,7 +168,18 @@ void loop() {
   } else {
     senCurvaCont = 0;
   }
-
+  if(sensorBordaDig[0]){
+    if(!sensorBordaDig[1]) {
+      if ((micros() - tempoLeituraBorda) >= 20) {
+        StartStop ++;
+        tempoLeituraBorda = micros();
+        bluetooth.println("Leu inicio/parada");
+      }
+    } else {
+      bluetooth.println("Cruzamento");
+    } 
+  }
+  /*
   senStarStopAnt = senStarStop;
   if (sensorBordaDig[0] != senStarStop) {
     senStarStopCont++;
@@ -185,6 +189,7 @@ void loop() {
   } else {
     senStarStopCont = 0;
   }
+  */
 
 //conforme o sensor direito vai detectando as marcas brancas, o "trecho" da pista vai mudando
 
@@ -194,12 +199,13 @@ void loop() {
     ErSenInt = 0;
     // Acresentar Timer
   }
+  /*
   if (senStarStop == 1 && senStarStopAnt == 0) {
     //Start Stop detectado;
-    StartStop = StartStop + 1;
+    StartStop = StartStop++;
 
   }
-
+  */
   if (StartStop == 2) { // número de marcações para parar
     motor.stop_Motor();
     parou = 1;
@@ -235,7 +241,7 @@ void loop() {
           KPs = KP_c_aberta;
           KIs = KI_c_aberta;//0.000001 * 256;
           KDs = KD_c_aberta;//400 * 256;
-          VELs = Vel_c_aberta*0.06;
+          VELs = Vel_c_aberta;
           VELerro = Vel_erro_c_aberta;
           //bluetooth.println("A");
           break;
@@ -247,7 +253,7 @@ void loop() {
           KPs = KP_c_fechada;
           KIs = KI_c_fechada;//0.000001 * 256;
           KDs = KD_c_fechada;//400 * 256;
-          VELs = Vel_c_fechada*0.08;
+          VELs = Vel_c_fechada;
           VELerro = Vel_erro_c_fechada;
           //bluetooth.println("F");
           break;
@@ -267,7 +273,7 @@ void loop() {
           KPs = KP_R;
           KIs = KI_R;//0.000001 * 256;
           KDs = KD_R;//400 * 256;
-          VELs = Vel_R*0.5;
+          VELs = Vel_R;
           VELerro = Vel_erro_R;
           bluetooth.println("C");
           break;
@@ -343,7 +349,7 @@ void loop() {
       //        if (Trecho == 0) {
       //          motorSetVel(Uv[0] * 0.2 * 65535, Uv[1] * 0.2 * 65535);
       //        }else
-     motor.motorSetVel(Uv[0] * 730, Uv[1] * 730);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
+     motor.motorSetVel(Uv[0] * 100, Uv[1] * 100);// usamos 65535, pq o pwm é de 0 a 2^10-1, ou seja é de 0 a 65355(eu usei o pwm como 125) no caso 
       //porque o Uv foi calcula pra ser um valor entre 0 e 1; quebrado (double)
     
     }
