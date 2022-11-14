@@ -19,7 +19,7 @@ char trechoTipo[] = { 'R', 'A','C','F','C','F' ,'C','F','C','F','F','F','R','F',
 
 float KP_R = 0.6, // CORRIGE MAIS RÁPIDO MAS CAUSA INSTABILIDADE -------------- 0.6 ---- 0.7
       KI_R = 0.006, // CORRIGE NO LONGO TEMPO ---------------------------------- 0.01 --- 0.005
-      KD_R = 0.1, // 0.1CORRIGE MAIS RÁPIDO ------------------------------------ 0.015 -- 0.00// 0.4
+      KD_R = 0.09, // 0.1CORRIGE MAIS RÁPIDO ------------------------------------ 0.015 -- 0.00// 0.4
       Vel_R = 0.6, // 0.6-------------------------------------------------------- 0.05 --- 0.05
       Vel_erro_R = 0.12; // 0.12 ----------------esse de curva----------------------------------- 0.08 --- 0.15
 
@@ -230,6 +230,7 @@ void loop() {
      // Trecho = 1;        // Teste ---------------------------------------------------
       bluetooth.println("Trecho: ");
       bluetooth.println(trechoTipo[Trecho]);
+      
       switch (trechoTipo[0]) {  //Voltar posição do vetor para variável Trecho
 
         case 'A': // Curva aberta
