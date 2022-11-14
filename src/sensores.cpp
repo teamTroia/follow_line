@@ -176,9 +176,9 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
     //Serial.println(sii);
     //Serial.print(" : ");
     sensorArrayAnalog[sii] = analogRead(sensorArrayPin[sii]);
-    Serial.print(sii);
-    Serial.print(" : ");
-    Serial.println(sensorArrayAnalog[sii]);
+    //Serial.print(sii);
+    //Serial.print(" : ");
+    //Serial.println(sensorArrayAnalog[sii]);
     //delay(250);
     //Serial.bluetooth(analogRead(sensorArrayPin[sii]));
     /*sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);

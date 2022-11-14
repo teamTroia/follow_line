@@ -5,8 +5,8 @@
 #define MBIN1 PA7
 #define MBIN2 PB0
 
-#define MAXVELA 13.1//m1
-#define MAXVELB 13//m2
+#define MAXVELA 53 //m1
+#define MAXVELB 48.6 //m2
 
 #define INVERTER 0  //se quiser inverter os sensor colocar 1 se não 0
 // Linha branca INVERTER = 0, linha preta INVERTER = 1
