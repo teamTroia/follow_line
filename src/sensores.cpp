@@ -173,14 +173,14 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
   sCont = 0;
   //Array
   for (sii = 0; sii < 6; sii++) {
-    Serial.println(sii);
-    Serial.print(" : ");
-    sensorArrayAnalog[sii] = analogRead(sensorArrayPin[sii]);
-    Serial.print(sii);
-    Serial.print(" : ");
-    Serial.println(sensorArrayAnalog[sii]);
-    //delay(250);
-    Serial.println(analogRead(sensorArrayPin[sii]));
+    // Serial.println(sii);
+    // Serial.print(" : ");
+    // sensorArrayAnalog[sii] = analogRead(sensorArrayPin[sii]);
+    // Serial.print(sii);
+    // Serial.print(" : ");
+    // Serial.println(sensorArrayAnalog[sii]);
+    // //delay(250);
+    // Serial.println(analogRead(sensorArrayPin[sii]));
     /*sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
       sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
       sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
