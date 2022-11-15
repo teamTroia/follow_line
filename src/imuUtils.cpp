@@ -5,7 +5,7 @@
 #define I2C_SDA PB9
 #define I2C_SCL PB8
 
-SoftWire WIRE1(PB8, PB9, I2C_FAST_MODE);
+SoftWire WIRE1(I2C_SCL, I2C_SDA, I2C_FAST_MODE);
 #define Wire WIRE1
 
 IMU::IMU() {}
@@ -61,7 +61,7 @@ float IMU::readAngularSpeed() {
     gyroX *= (0.017453293F);
     gyroY *= (0.017453293F);
     gyroZ *= (0.017453293F);
-    Serial.print("gyroZ: ");
-    Serial.println(gyroZ);
+//     Serial.print("gyroZ: ");
+//     Serial.println(gyroZ);
     return gyroZ;
 }

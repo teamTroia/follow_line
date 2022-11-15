@@ -10,7 +10,7 @@
 const int sensorArrayPin[6] = {PB1,PA6,PA5,PA4,PA3,PA0};//matriz com os nossos 8 sensores de linha
 const int sensorBordaPin[2] = {PB10, PA8};
 
-const float sensorArrayErroConst[6] = {-1.75, -1.75, 0.5, 0.5, 1.75, 1.75};//posição dos sensores varia de 3 a -3
+const float sensorArrayErroConst[6] = {-4, -2, -1, 1, 2, 4};//posição dos sensores varia de 3 a -3
 
 int sensorArrayAnalog[6]; //Valor Lido do Array de sensores
 int sensorBordaAnalog[2]; //Valor Lido dos sensores de borda
@@ -65,17 +65,10 @@ void Sensores::sensorInit() {
   pinMode(sensorArrayPin[3], INPUT_ANALOG);
   pinMode(sensorArrayPin[4], INPUT_ANALOG);
   pinMode(sensorArrayPin[5], INPUT_ANALOG);
-  //bluetooth.begin(9600);
-  //pinMode(sensorArrayPin[8], INPUT_ANALOG);
-  //pinMode(sensorArrayPin[9], INPUT_ANALOG);
 
-  if (BORDA_RC) {
-    pinMode(sensorBordaPin[0], INPUT);
-    pinMode(sensorBordaPin[1], INPUT);
-  } else {
-    pinMode(sensorBordaPin[0], INPUT_ANALOG);
-    pinMode(sensorBordaPin[1], INPUT_ANALOG);
-  }
+  pinMode(sensorBordaPin[0], INPUT);
+  pinMode(sensorBordaPin[1], INPUT);
+  
   Serial.println("Sensores inicializados!");
 }
 
@@ -83,7 +76,7 @@ void Sensores::sensorInit() {
 void Sensores::sensorCalibrate() {
 
   digitalWrite(LED_L3, HIGH);                       // indicação do início da calibração
-  delay(1000);
+  delay(10);
 
   if (Calibrado == 0) {
     for (int i = 0; i < 6; i++) {                   // "zerando" valores dos sensores para adquirir novos sem limitações, apenas na primeira calibração,
@@ -163,69 +156,42 @@ void Sensores::sensorCalibrate() {
 }
 
 int sCont;//contador 
-float sSoma;//soma da posição (sensorArrayErroConst[8])
-int sii;//variavel usada para fazer a ontagem dos sensores   
+int sensorNum;//variavel usada para fazer a ontagem dos sensores   
 unsigned long auxTemp;
 
 //----------------------- Leitura dos sensores----------------------
-void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
+void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[], int &sSoma) {
   sSoma = 0;
   sCont = 0;
   //Array
-  for (sii = 0; sii < 6; sii++) {
-    // Serial.println(sii);
-    // Serial.print(" : ");
-    // sensorArrayAnalog[sii] = analogRead(sensorArrayPin[sii]);
-    // Serial.print(sii);
-    // Serial.print(" : ");
-    // Serial.println(sensorArrayAnalog[sii]);
-    // //delay(250);
-    // Serial.println(analogRead(sensorArrayPin[sii]));
-    /*sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
-      sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
-      sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
-      sensorArrayAnalog[sii] += analogRead(sensorArrayPin[sii]);
-      sensorArrayAnalog[sii]  = sensorArrayAnalog[sii] / 5;
-    */
-    // Analogico para para digital do array- Interpretação dos valores lidos (definindo se é preto ou se é branco)
-
+  for (sensorNum = 0; sensorNum < 6; sensorNum++) {
     
     if (INVERTER) {//como foi declarado INVERTER, vamos declarar como verdadeiro se está no preto
-      if (sensorArrayDig[sii] == 0 && sensorArrayAnalog[sii] > superiorThreshold[sii]) {
-        sensorArrayDig[sii] = 1;//VERDADEIRO, é preto
+      if (sensorArrayDig[sensorNum] == 0 && sensorArrayAnalog[sensorNum] > superiorThreshold[sensorNum]) {
+        sensorArrayDig[sensorNum] = 1;//VERDADEIRO, é preto
         Serial.println("branco");
       }
-      if (sensorArrayDig[sii] == 1 && sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
-        sensorArrayDig[sii] = 0;//FALSO; não é preto
+      if (sensorArrayDig[sensorNum] == 1 && sensorArrayAnalog[sensorNum] < inferiorThreshold[sensorNum]) {
+        sensorArrayDig[sensorNum] = 0;//FALSO; não é preto
         Serial.println("preto");
       }
     }
     else {
-      if ( sensorArrayAnalog[sii] > superiorThreshold[sii]) {
-        sensorArrayDig[sii] = 0;
-        /*Serial.print("Sensor ");
-        Serial.print(sii);
-        Serial.print(" = ");
-        Serial.println("PRETO");
-        delay(250);*/
+      if ( sensorArrayAnalog[sensorNum] > superiorThreshold[sensorNum]) {
+        sensorArrayDig[sensorNum] = 0;
       }
-      if ( sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
-        sensorArrayDig[sii] = 1;//se estiver no branco, é verdadeiro
-        /*Serial.print("Sensor ");
-        Serial.print(sii);
-        Serial.print(" = ");
-        Serial.println("BRANCO");
-        delay(250);*/
+      if ( sensorArrayAnalog[sensorNum] < inferiorThreshold[sensorNum]) {
+        sensorArrayDig[sensorNum] = 1;
       }
     }
-    //delay(500);
-
-    //essa parte soma a posição dos sensores e descobre o valor de erro e é usado no PID
-
-    if (sensorArrayDig[sii]) {
-      sSoma += sensorArrayErroConst[sii];
+    if (sensorArrayDig[sensorNum]) {
+      Serial.print("  | ");
+      Serial.print(sensorArrayDig[sensorNum]);
+      sSoma += sensorArrayErroConst[sensorNum];
       sCont++;
     }
+    Serial.println("");
+    //Serial.println(sSoma);
   }
   // Calcular erro e verificar se perder a faixa no array
   
@@ -263,7 +229,7 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
 
   /*leitura DIGITAL dos sensores de BORDA*/
   
-  else if (BORDA_RC) {
+  else {
     pinMode(sensorBordaPin[0], OUTPUT);
     pinMode(sensorBordaPin[1], OUTPUT);
     digitalWrite(sensorBordaPin[0], HIGH);
@@ -300,17 +266,7 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
     sensorBordaDig[0] = (sensorBordaAnalog[0] < sensorBordaThreshold[0]);
     sensorBordaDig[1] = (sensorBordaAnalog[1] < sensorBordaThreshold[1]);
 
-  } else {
-    sensorBordaAnalog[0] = analogRead(sensorBordaPin[0]);
-    sensorBordaAnalog[1] = analogRead(sensorBordaPin[1]);
-    sensorBordaDig[0] = (sensorBordaAnalog[0] < sensorBordaThreshold[0]);
-    sensorBordaDig[1] = (sensorBordaAnalog[1] < sensorBordaThreshold[1]);
-  }
-  // Analogico para para digital das bordas
-  if (INVERTER) {
-    sensorBordaDig[0] = !sensorBordaDig[0];
-    sensorBordaDig[1] = !sensorBordaDig[1];
-  }
+  } 
 }
 
 
