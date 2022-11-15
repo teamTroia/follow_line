@@ -3,6 +3,7 @@
  #include "../include/motor.h"
  #include "../include/sensores.h"
  #include <SoftwareSerial.h>
+ 
  SoftwareSerial bluetooth(PB7,PB6);
  
 
