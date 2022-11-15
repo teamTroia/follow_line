@@ -12,7 +12,9 @@
 */
 
 // PID --------------------------------------------------------------
-char trechoTipo[] = { 'R', 'A','C','F','C','F' ,'C','F','C','F','F','F','R','F','R','F','R','F','R','F','R','F','R','A','R','A','R','A','R','A','R'}; //TREINO
+char trechoTipo[] = { 'R', 'F', 'C', 'F', 'F', 'A', 'F', 'R', 'F', 'L', 'F', 'L', 'F', 'C', 'F', 'C', 'F', 'R', 'C', 'F', 'F', 'F', 'F', 'F', 'R', 'F', 'R', 'F', 'R', 'F', 'C', 'A', 'C', 'F', 'R','A','R','F','R', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'R', 'F', 'A', 'C'}; // pista RCX 2022
+
+//{ 'R', 'A','C','F','C','F' ,'C','F','C','F','F','F','R','F','R','F','R','F','R','F','R','F','R','A','R','A','R','A','R','A','R'}; //TREINO
 //char trechoTipo[] = { 'R', 'F','C','F','C','F','C','A' ,'C','F','C','A','C','A','C','F','R','A','C','A','C','A','C','F','C','A','C','F','F','F','L'}; //oficial dia 1
 //char trechoTipo[] = { 'R', 'A','C','F','C','F' ,'C','F','C','A','R'}; //oficial dia 1
 //char trechoTipo[] = { '1', '2','3','4','5','6' ,'7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29'}; //OFICIAL
@@ -24,16 +26,16 @@ float KP_R = 0.6, // CORRIGE MAIS RÁPIDO MAS CAUSA INSTABILIDADE --------------
       Vel_erro_R = 0.12; // 0.12 ----------------esse de curva----------------------------------- 0.08 --- 0.15
 
 float KP_c_aberta = 0.6,
-      KI_c_aberta = 0.005,
-      KD_c_aberta = 0.4,
-      Vel_c_aberta = 0.2,
-      Vel_erro_c_aberta = 0.02;
+      KI_c_aberta = 0.006,
+      KD_c_aberta = 0.09,
+      Vel_c_aberta = 0.3,
+      Vel_erro_c_aberta = 0.12;
 
 float KP_c_fechada = 0.6,
-      KI_c_fechada = 0.005,
-      KD_c_fechada = 0.4,
-      Vel_c_fechada = 0.1,
-      Vel_erro_c_fechada = 0.02;
+      KI_c_fechada = 0.006,
+      KD_c_fechada = 0.3,
+      Vel_c_fechada = 0.6,
+      Vel_erro_c_fechada = 0.12;
 
 
 //Variáveis----------------------------------------------------------
@@ -179,7 +181,7 @@ void loop() {
   senStarStopAnt = senStarStop;
   if (sensorBordaDig[0] != senStarStop) {
     senStarStopCont++;
-    if (senStarStopCont >= 3) {
+    if (senStarStopCont >= 2) {
       senStarStop = sensorBordaDig[0];
     }
   } else {
@@ -229,6 +231,7 @@ void loop() {
       //bluetooth.println(Trecho);
      // Trecho = 1;        // Teste ---------------------------------------------------
       bluetooth.println("Trecho: ");
+      bluetooth.println(Trecho);
       bluetooth.println(trechoTipo[Trecho]);
       
       switch (trechoTipo[0]) {  //Voltar posição do vetor para variável Trecho
@@ -260,7 +263,7 @@ void loop() {
           KIs = KI_R;//0.000001 * 256;
           KDs = KD_R;//400 * 256;
           VELs = Vel_R;
-          VELerro = Vel_erro_R;;
+          VELerro = Vel_erro_R;
           //bluetooth.println("F");
           break;
 

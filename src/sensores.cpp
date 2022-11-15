@@ -289,12 +289,12 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
 
     if (sensorBordaAnalog[0] == 0) sensorBordaAnalog[0] = 65535;//TA FALANDO QUE SE A LEITURA FOR FALSA, TA NO PRETO; 65535 é o PWM em binário
     if (sensorBordaAnalog[1] == 0) sensorBordaAnalog[1] = 65535;
-     /*bluetooth.print("bordA 1: ");
-     bluetooth.print(sensorBordaAnalog[0]);
-     bluetooth.println("");
-     bluetooth.print("bordA 2: ");
-     bluetooth.print(sensorBordaAnalog[1]);
-     bluetooth.println("");*/
+     Serial.print("bordA 1: ");
+     Serial.print(sensorBordaAnalog[0]);
+     Serial.println("");
+     Serial.print("bordA 2: ");
+     Serial.print(sensorBordaAnalog[1]);
+     Serial.println("");
    
 
     sensorBordaDig[0] = (sensorBordaAnalog[0] < sensorBordaThreshold[0]);

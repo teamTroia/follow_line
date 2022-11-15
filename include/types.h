@@ -5,14 +5,14 @@
 #define MBIN1 PA7
 #define MBIN2 PB0
 
-#define MAXVELA 64 //m1
-#define MAXVELB 56 //m2
+#define MAXVELA 55.5 //m1
+#define MAXVELB 41.5 //m2
 
 #define INVERTER 0  //se quiser inverter os sensor colocar 1 se não 0
 // Linha branca INVERTER = 0, linha preta INVERTER = 1
 
 #define BORDA_RC 1
-#define BORDA_RC_TIMEOUT 900
+#define BORDA_RC_TIMEOUT 300
 #define divisor 7 // divisor da faixa que determina o threshold
 
 #define LED_L1 PB12
