@@ -3,13 +3,13 @@
 
 #include "../include/motor.h"
 #include "../include/sensores.h"
+#include "../include/PID.h"
+
 #include "../include/types.h"
 SoftwareSerial bluetooth(PB7, PB6);
 
-/*  Pandemia-2020-2021
-   Follow line utilizando STM32F103C8T6 - TROIA
-   por: Luara Linhares e Fidelis ihuuuu
-*/
+// Projeto Apollo - Nelis e Pote
+
 
 // PID --------------------------------------------------------------
 char trechoTipo[] = {'R', 'A', 'C', 'F', 'C', 'F', 'C', 'F', 'C', 'F', 'F',
@@ -64,13 +64,17 @@ boolean LOWBAT = false,  // verdadeiro para indicar a bateria fraca
 void verificaBateria();
 Motor motor = Motor();
 Sensores sensor = Sensores();
+PID pid = PID();
 
 int Iniciado = 0;
+
+
 int sensorBordaDig[2];  // Valor Lido dos sensores de borda
 float sensorArrayErro;
 double tempoLeituraBorda = micros();
 double tempoLeituraTrecho = micros();
 int sSoma = 0;
+
 void setup() {
     motor.motorInit();
     pinMode(BOT1, INPUT_PULLDOWN);
@@ -81,15 +85,14 @@ void setup() {
     Serial.begin(9600);
     bluetooth.begin(9600);
     sensor.sensorInit();
-
 }
 
 void loop() {
-    // Serial.print("BOT1: ");
-    // Serial.println(digitalRead(BOT1));
-    // Serial.print("BOT2: ");
-    // Serial.println(digitalRead(BOT2));
+    
     sensor.sensorLer(sensorArrayErro, sensorBordaDig, sSoma);
+    sensor.calcula_erro();
+    pid.calcula_PID();
+
     while ((!digitalRead(BOT2)) && (Iniciado == 0)) {
         for (int i =0; i<10; i++) {
             digitalWrite(LED_BUILTIN, ((i/2 == 0) ? HIGH : LOW));
@@ -101,10 +104,6 @@ void loop() {
             Iniciado = 1;
         }
     }
-
-    // Serial.print(senStarStop);
-    // Serial.print(" ,");
-    // Serial.println(senCurva);
 
     if (sensorBordaDig[1] && !sensorBordaDig[0]) {
         if ((micros() - tempoLeituraBorda) >= 900) {
@@ -118,15 +117,14 @@ void loop() {
             tempoLeituraBorda = micros();
         }
     } else if (sensorBordaDig[1] && sensorBordaDig[0]) {
-        // bluetooth.println("Cruzamento");
-        // Serial.print("Cruzamento");
+        
     }
     if (StartStop >= 2) {  // número de marcações para parar
         motor.stop_Motor();
         digitalWrite(LED_L3, HIGH);
     } else {
-        //Serial.println(sSoma);
-        int velAng = sSoma * 2;
-        motor.motorsControl(-10, velAng);
+        //int velAng = sSoma * 2;
+        //motor.motorsControl(-10, velAng);
+        pid.controla_motor();
     }
 }

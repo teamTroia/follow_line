@@ -1,6 +1,7 @@
 #ifndef SENSORES_H
 #define SENSORES_H
 
+
 #include "./types.h"
 #include <SoftwareSerial.h>
 
@@ -10,6 +11,7 @@ class Sensores {
 
   public:
     Sensores();
+    int calcula_erro();
     void sensorInit();
     void sensorLer(float &sensorArrayErro, int sensorBordaDig[], int &sSoma);
     void sensorCalibrate();

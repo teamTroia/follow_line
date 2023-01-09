@@ -4,7 +4,6 @@
 
 //SoftwareSerial bluetooth(PB7,PB6);
 
-
 //Variáveis----------------------------------------------------------------
 
 const int sensorArrayPin[6] = {PB1,PA6,PA5,PA4,PA3,PA0};//matriz com os nossos 8 sensores de linha
@@ -15,16 +14,11 @@ const float sensorArrayErroConst[6] = {-4, -2, -1, 1, 2, 4};//posição dos sens
 int sensorArrayAnalog[6]; //Valor Lido do Array de sensores
 int sensorBordaAnalog[2]; //Valor Lido dos sensores de borda
 
-//int  [2] = {300, 100}; //Valor de limiar dos sensores de borda
-
 
 int maiorBordaAnalog[2] = {4000, 4000};
 int menorBordaAnalog[2] = {1500, 1500};
 
-//int sensorBordaThreshold[2] = {300, 100}; //Valor de limiar dos sensores de borda
-
 int sensorArrayDig[6]; //Valor Lido do Array de sensores
-
 
 int contFalhasConsecutivas = 0;
 
@@ -40,8 +34,6 @@ int menorArrayAnalog[6] = {1500, 1500, 1500, 1500, 1500, 1500}; // Menor valor m
 int superiorThreshold[6] = {3685, 3688, 3721, 3750, 3772, 3766};//Maiores valores reais lidos e tirados através de testes
 int inferiorThreshold[6] = {3150, 3166, 3239, 3302, 3364, 3343};//s valores reais lidos e tirados através de testes
 
-//int maiorBordaAnalog[2] = {4000, 4000};
-//int menorBordaAnalog[2] = {1500, 1500};
 int superiorThresholdBorda[2] = {500, 500};
 int inferiorThresholdBorda[2] = {100, 100};
 int sensorBordaThreshold[2]={600, 600};
@@ -57,8 +49,10 @@ unsigned short int sensorCalib[6][256];
 
 Sensores::Sensores () {
 }
+
 //Funções------------------------------------------------------------------
 void Sensores::sensorInit() {
+  
   pinMode(sensorArrayPin[0], INPUT_ANALOG);
   pinMode(sensorArrayPin[1], INPUT_ANALOG);
   pinMode(sensorArrayPin[2], INPUT_ANALOG);
@@ -255,13 +249,7 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[], int &sSom
 
     if (sensorBordaAnalog[0] == 0) sensorBordaAnalog[0] = 65535;//TA FALANDO QUE SE A LEITURA FOR FALSA, TA NO PRETO; 65535 é o PWM em binário
     if (sensorBordaAnalog[1] == 0) sensorBordaAnalog[1] = 65535;
-     /*bluetooth.print("bordA 1: ");
-     bluetooth.print(sensorBordaAnalog[0]);
-     bluetooth.println("");
-     bluetooth.print("bordA 2: ");
-     bluetooth.print(sensorBordaAnalog[1]);
-     bluetooth.println("");*/
-   
+     
 
     sensorBordaDig[0] = (sensorBordaAnalog[0] < sensorBordaThreshold[0]);
     sensorBordaDig[1] = (sensorBordaAnalog[1] < sensorBordaThreshold[1]);
@@ -269,19 +257,25 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[], int &sSom
   } 
 }
 
+int Sensores::calcula_erro(){
+    int erro = 0;
+    
+    
+    //erro igual a zero indica que os dois sensores centrais estão posicionados corretamente
 
-/*
-   HISTÓRICO DE DADOS COLHIDOS
-   Maiores
-  {4005, 3997, 3976, 3992, 3995, 3996, 3991, 4013}
-  {3947, 3940, 3907, 3952, 3961, 3884, 3955, 3979}
-  {4002, 3994, 3991, 3991, 3992, 3991, 3992, 3999}
+    if((sensorArrayDig[0] == 0) && (sensorArrayDig[1] == 0) && (sensorArrayDig[2] == 1) && (sensorArrayDig[3] == 1) && (sensorArrayDig[4] == 0) && (sensorArrayDig[5] == 0)) erro = 0;
 
-   Menores
-  {1663, 1753, 1797, 1753, 1903, 1761, 1679, 2081}
-  {1307, 1451, 1651, 1611, 1757, 1641, 1433, 1921}
-  {1427, 1495, 1833, 2070, 2102, 1813, 1551, 1753}
+    //erro negativo indica que o robô está com os sensores da esquerda fazendo leitura, ou seja, o follow está tendendo à direita
 
+    else if((sensorArrayDig[0] == 0) && (sensorArrayDig[1] == 1) && (sensorArrayDig[2] == 1) && (sensorArrayDig[3] == 0) && (sensorArrayDig[4] == 0) && (sensorArrayDig[5] == 0)) erro = -1;
+    else if((sensorArrayDig[0] == 1) && (sensorArrayDig[1] == 1) && (sensorArrayDig[2] == 0) && (sensorArrayDig[3] == 0) && (sensorArrayDig[4] == 0) && (sensorArrayDig[5] == 0)) erro = -1.5;
+    else if((sensorArrayDig[0] == 1) && (sensorArrayDig[1] == 0) && (sensorArrayDig[2] == 0) && (sensorArrayDig[3] == 0) && (sensorArrayDig[4] == 0) && (sensorArrayDig[5] == 0)) erro = -2;
 
-*/
+    //erro positivo indica que o robô está com os sensores da direita fazendo leitura, ou seja, o follow está tendendo à esquerda
 
+    else if((sensorArrayDig[0] == 0) && (sensorArrayDig[1] == 0) && (sensorArrayDig[2] == 0) && (sensorArrayDig[3] == 1) && (sensorArrayDig[4] == 1) && (sensorArrayDig[5] == 0)) erro = 1;
+    else if((sensorArrayDig[0] == 0) && (sensorArrayDig[1] == 0) && (sensorArrayDig[2] == 0) && (sensorArrayDig[3] == 0) && (sensorArrayDig[4] == 1) && (sensorArrayDig[5] == 1)) erro = 1.5;
+    else if((sensorArrayDig[0] == 0) && (sensorArrayDig[1] == 0) && (sensorArrayDig[2] == 0) && (sensorArrayDig[3] == 0) && (sensorArrayDig[4] == 0) && (sensorArrayDig[5] == 1)) erro = 2;
+
+    return erro;
+}

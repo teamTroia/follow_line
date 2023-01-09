@@ -9,19 +9,8 @@ Motor::Motor () {
 }
 
 void Motor::motorInit() {
-  //Primeiro jogar o Nsleep p alto, isso ira desligar a ponte H
- // pinMode (NSLEEP, PWM);
-  //digitalWrite(NSLEEP, HIGH);
-  //Jogar os dois pinos de entrada do motor A para nivel baixo
-  //pinMode (MAIN1, PWM);
-  //pinMode (MAIN2, PWM);
-  //digitalWrite(MAIN1, LOW);
-  //digitalWrite(MAIN2, LOW);
-
-  //Agora Liga a ponte H e esta pronta para usar :p
-  //digitalWrite(NSLEEP, LOW);
-
-  pinMode (MAIN1, OUTPUT); // As variáveis IN são para acionamento do TLE, logo são saídas.(PWM).
+  
+  pinMode (MAIN1, OUTPUT); // As variáveis IN são para acionamento da ponte-h, logo são saídas.(PWM).
   pinMode (MAIN2, OUTPUT);
   pinMode (MBIN1, OUTPUT);
   pinMode (MBIN2, OUTPUT);
@@ -30,8 +19,6 @@ void Motor::motorInit() {
   analogWrite(MAIN2, 0);
   analogWrite(MBIN1, 0);
   analogWrite(MBIN2, 0);
-
-  //Serial.println("Motores inicializados!");
 }
 
 void Motor::stop_MotorA() {
@@ -51,12 +38,13 @@ void Motor::stop_Motor() {
 void Motor::set_MotorA(int vel) {
   if (vel > 0) {
     analogWrite(MAIN2, 0);
-    vel  = vel * MAXVELA *  0.0255;
+    
     if (vel > 255) vel = 255;
     analogWrite(MAIN1, vel);
   } else  {
     analogWrite(MAIN1, 0);
-    vel = -vel * MAXVELA * 0.0255;
+    vel = -vel;
+
     if (vel > 255) vel = 255;
     analogWrite(MAIN2, vel);
   }
@@ -64,13 +52,14 @@ void Motor::set_MotorA(int vel) {
 void Motor::set_MotorB(int vel) {
   if (vel > 0) {
     analogWrite(MBIN2, 0);
-    vel  = vel * MAXVELB *  0.0255;
+
     if (vel > 255)
       vel = 255;
     analogWrite(MBIN1, vel);
   } else  {
     analogWrite(MBIN1, 0);
-    vel = -vel * MAXVELB * 0.0255;
+    vel = -vel;
+    
     if (vel > 255) vel = 255;
     analogWrite(MBIN2, vel);
   }
@@ -96,7 +85,7 @@ float Motor::pid(float target, float atual) {
 }
 
 void Motor::motorsControl(float linear, float angular) {
-    float vel [2] = {0, 0};
+
     angular = pid(angular, imu.readAngularSpeed());
 
     angular = angular > 100 ? 100 : angular;
