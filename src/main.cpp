@@ -84,7 +84,7 @@ void setup() {
   pinMode(BOT1, INPUT_PULLDOWN);
   pinMode(BOT2, INPUT_PULLDOWN);
   pinMode(LED_L1, OUTPUT);
-  pinMode(LED_L3, OUTPUT);
+  pinMode(LED_L2, OUTPUT);
   pinMode(analogBat, INPUT_ANALOG);
   //pinMode(MOSFET, OUTPUT);
   //pinMode(BUZZER_PIN, OUTPUT);
@@ -207,18 +207,18 @@ void loop() {
   if (StartStop == 2) { // número de marcações para parar
     motor.stop_Motor();
     parou = 1;
-    digitalWrite(LED_L3, HIGH);
+    digitalWrite(LED_L1, HIGH);
+    digitalWrite(LED_L2, HIGH);
   }
-
+/*
   if (senCurva == 1 || senStarStop == 1) {
     digitalWrite(LED_L1, HIGH);
-  } else digitalWrite(LED_L1, LOW);
+  } else digitalWrite(LED_L1, LOW);*/
   //    Buzzer(senCurva || senStarStop); // Buzzer soa enquanto os sensores de borda estiverem detectando a linha
 
   // Início ---------------------------------------------------------------------------------------------------------------------------------------------------------
   if (Iniciado != 0 && parou == 0) { // Logo depois de apertarbluetooth.println o botão de Start
 
-    digitalWrite(LED_L3, HIGH);
 
     if (micros() - T_Sen_0 >= 2000) {
       ErSen_0 = ErSen;

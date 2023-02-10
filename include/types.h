@@ -15,9 +15,8 @@
 #define BORDA_RC_TIMEOUT 300
 #define divisor 7 // divisor da faixa que determina o threshold
 
-#define LED_L1 PB12
-#define LED_L2 PA11
-#define LED_L3 PC13
+#define LED_L1 PC13
+#define LED_L2 PA10
 #define BOT1 PB3
 #define BOT2 PB4
 
