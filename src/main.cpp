@@ -19,22 +19,11 @@ void setup(){
 }
 
 void calibracao();
+void leitura();
 
 void loop(){
     calibracao();
-    
-
-    if(calibrado && (digitalRead(BTN2) or ligado)){
-        sensores.read(valores_sensor);
-        for (uint8_t i = 0; i < qtd_sensores; i++){
-            Serial.print("Sensor");
-            Serial.print(i);
-            Serial.print(": ");
-            Serial.println(valores_sensor[i]);
-        }
-        delay(250);
-        ligado = 1;
-    }
+    leitura();
 }
 
 void calibracao(){
@@ -56,4 +45,18 @@ void calibracao(){
         calibrado = 1;
     }
   }
+}
+
+void leitura(){
+    if(calibrado && (digitalRead(BTN2) or ligado)){
+        sensores.read(valores_sensor);
+        for (uint8_t i = 0; i < qtd_sensores; i++){
+            Serial.print("Sensor");
+            Serial.print(i);
+            Serial.print(": ");
+            Serial.println(valores_sensor[i]);
+        }
+        delay(250);
+        ligado = 1;
+    }
 }
