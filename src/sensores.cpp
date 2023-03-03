@@ -206,21 +206,21 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
       }
     }
     else {
-      if ( sensorArrayAnalog[sii] > superiorThreshold[sii]) {
+      if ( sensorArrayAnalog[sii] >= superiorThreshold[sii]) {
         sensorArrayDig[sii] = 0;
-        /*Serial.print("Sensor ");
+        Serial.print("Sensor ");
         Serial.print(sii);
         Serial.print(" = ");
         Serial.println("PRETO");
-        delay(250);*/
+        delay(250);
       }
-      if ( sensorArrayAnalog[sii] < inferiorThreshold[sii]) {
+      if ( sensorArrayAnalog[sii] <= inferiorThreshold[sii]) {
         sensorArrayDig[sii] = 1;//se estiver no branco, é verdadeiro
-        /*Serial.print("Sensor ");
+        Serial.print("Sensor ");
         Serial.print(sii);
         Serial.print(" = ");
         Serial.println("BRANCO");
-        delay(250);*/
+        delay(250);
       }
     }
     //delay(500);
@@ -294,12 +294,12 @@ void Sensores::sensorLer(float &sensorArrayErro, int sensorBordaDig[]) {
 
     if (sensorBordaAnalog[0] == 0) sensorBordaAnalog[0] = 65535;//TA FALANDO QUE SE A LEITURA FOR FALSA, TA NO PRETO; 65535 é o PWM em binário
     if (sensorBordaAnalog[1] == 0) sensorBordaAnalog[1] = 65535;
-     Serial.print("bordA 1: ");
+     /*Serial.print("bordA 1: ");
      Serial.print(sensorBordaAnalog[0]);
      Serial.println("");
      Serial.print("bordA 2: ");
      Serial.print(sensorBordaAnalog[1]);
-     Serial.println("");
+     Serial.println("");*/
    
 
     sensorBordaDig[0] = (sensorBordaAnalog[0] < sensorBordaThreshold[0]);

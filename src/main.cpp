@@ -158,7 +158,11 @@ void loop() {
       sensor.sensorCalibrate();
       Serial.println("calibrando...");
     }
+    digitalWrite(LED_L1,HIGH);
+    digitalWrite(LED_L2,HIGH);
   }
+  digitalWrite(LED_L1,LOW);
+  digitalWrite(LED_L2,LOW);
   Iniciado = 1;
   sensor.sensorLer(sensorArrayErro, sensorBordaDig);
   
