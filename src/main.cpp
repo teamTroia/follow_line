@@ -2,8 +2,10 @@
 #include <QTRSensors.h>
 
 QTRSensors sensores;
+QTRSensors borda;
 const uint8_t qtd_sensores = 6;
 uint16_t valores_sensor[qtd_sensores];
+uint16_t valores_borda[2];
 bool calibrado = 0, btn_clicado = 0, ligado = 0; 
 
 void setup(){
@@ -14,6 +16,9 @@ void setup(){
     digitalWrite(LED1,LOW);
     digitalWrite(LED2,LOW);
     sensores.setTypeAnalog();
+    borda.setTypeRC();
+
+    borda.setSensorPins((const uint8_t[]){PB10, PA8},2);
     sensores.setSensorPins((const uint8_t[]){PB1, PA6, PA5, PA4, PA3, PA0}, qtd_sensores);
     Serial.begin(9600);
 }
@@ -34,14 +39,20 @@ void calibracao(){
     Serial.println("GO");
 
     delay(100);
-    digitalWrite(LED1, LOW);
-    digitalWrite(LED2, LOW);
-    delay(100);
 
     if(digitalRead(BTN1)){
         Serial.println("calibrando");
-        for (int i = 0; i < 400; i++)
+
+        digitalWrite(LED1, LOW);
+        digitalWrite(LED2, LOW);
+        delay(100);
+        digitalWrite(LED1, HIGH);
+        digitalWrite(LED2, HIGH);
+        
+        for (int i = 0; i < 1000; i++){
             sensores.calibrate();
+            //borda.calibrate();
+        }
         calibrado = 1;
     }
   }
@@ -50,11 +61,18 @@ void calibracao(){
 void leitura(){
     if(calibrado && (digitalRead(BTN2) or ligado)){
         sensores.read(valores_sensor);
+        borda.read(valores_borda);
         for (uint8_t i = 0; i < qtd_sensores; i++){
             Serial.print("Sensor");
             Serial.print(i);
             Serial.print(": ");
             Serial.println(valores_sensor[i]);
+        }
+        for (uint8_t i = 0; i < 2; i++){
+            Serial.print("Sensor borda ");
+            Serial.print(i);
+            Serial.print(": ");
+            Serial.println(valores_borda[i]);
         }
         delay(250);
         ligado = 1;
