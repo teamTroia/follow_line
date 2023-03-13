@@ -1,6 +1,8 @@
 #include "./types.h"
 #include <QTRSensors.h>
+#include <SoftwareSerial.h>
 
+SoftwareSerial bluetooth(PB7, PB6);
 QTRSensors sensores; //Declaração dos sensores da frente
 QTRSensors borda; //Declaração dos sensores de borda
 
@@ -12,17 +14,13 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
 
+float Kp = 0.012, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
 
 
-float Kp = 80, Kd = 60, Ki = 0; //Constantes multiplicativas para o PID
+float erro = 0, P = 0, I = 0, D = 0, valor_PID = 0, erro_anterior = 0;
+int velocidade = 40; //Velocidade para os motores (pode e deve ser ajustada)
 
-
-
-
-float erro=0, P=0, I=0, D=0, valor_PID=0, erro_anterior=0, I_anterior=0;
-int velocidade = 50; //Velocidade para os motores (pode e deve ser ajustada)
-
-int erros[11] = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5}; //Valores dos erros para cada situação de leitura dos sensores
+int erros[11] = {5000, 4000, 3000, 2000, 1000, 0, -1000, -2000, -3000, -4000, -5000}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
 uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
 
@@ -33,6 +31,8 @@ void calcula_erro();
 void motor();
 void stop_motor();
 void marcacoes_laterais();
+void bluetooth_PID();
+String leitura_bluetooth();
 
 void setup(){
 //Declaração-de-pinos-------------------------------------------------------------
@@ -48,9 +48,10 @@ void setup(){
     sensores.setTypeAnalog(); //Define os sensores frontais como analógicos
     borda.setTypeRC(); //Define os sensores de borda como digitais 
 
-    borda.setSensorPins((const uint8_t[]){PB10, PA8},qtd_borda); //Definição dos pinos dos sensores de borda
-    sensores.setSensorPins((const uint8_t[]){PB1, PA6, PA5, PA4, PA3, PA0}, qtd_sensores); //Definição dos pinos dos sensores frontais
+    borda.setSensorPins((const uint8_t[]){PB10, PA8},qtd_borda); //Definição dos pinos dos sensores de borda (direita esquerda, nessa ordem)
+    sensores.setSensorPins((const uint8_t[]){PA0, PA3, PA4, PA5, PA6, PB1}, qtd_sensores); //Definição dos pinos dos sensores frontais, da ESQUERDA PARA DIREITA (lembra que eu observei a Top Layer, ou seja, PA0 = S1)
     Serial.begin(9600); //Inicialização do monitor serial
+    bluetooth.begin(9600);
 }
 
 void loop(){
@@ -63,7 +64,8 @@ void calibracao(){
     digitalWrite(LED1, HIGH); //Os leds ficam acesso até que o botão seja pressionado
     digitalWrite(LED2, HIGH); //Os leds ficam acesso até que o botão seja pressionado
 
-    Serial.println("GO"); //A mensagem "Go" é exibida no monitor
+    bluetooth_PID();
+    //Serial.println("GO"); //A mensagem "Go" é exibida no monitor
 
     delay(100);
 
@@ -91,6 +93,10 @@ void leitura(){
         ligado = 1;
         marcacoes_laterais();
 
+        if(digitalRead(BTN1)){
+            calibrado = 0;
+            ligado = 0;
+        }
         //Caso seja necessário averiguar os valores lidos pelos sensores, descomente essa parte abaixo:
         /*
         for (uint8_t i = 0; i < qtd_sensores; i++){
@@ -129,6 +135,9 @@ void calcula_erro(){
 
     else if(valores_sensor[0] > 1000 && valores_sensor[1] > 1000 && valores_sensor[2] <= 1000 && valores_sensor[3] <= 1000 && valores_sensor[4] <= 1000 &&valores_sensor[5] > 1000)
         erro = erros[6];
+    
+    else if(valores_sensor[0] > 1000 && valores_sensor[1] <= 1000 && valores_sensor[2] <= 1000 && valores_sensor[3] <= 1000 && valores_sensor[4] <= 1000 &&valores_sensor[5] > 1000)
+        erro = erros[5];
 
     else if(valores_sensor[0] > 1000 && valores_sensor[1] > 1000 && valores_sensor[2] <= 1000 && valores_sensor[3] <= 1000 && valores_sensor[4] > 1000 &&valores_sensor[5] > 1000)
         erro = erros[5];
@@ -148,9 +157,8 @@ void calcula_erro(){
     else if(valores_sensor[0] <= 1000 && valores_sensor[1] > 1000 && valores_sensor[2] > 1000 && valores_sensor[3] > 1000 && valores_sensor[4] > 1000 &&valores_sensor[5] > 1000)
         erro = erros[0];
     
-    
     else{
-        Serial.println("saiu");
+        //Serial.println("saiu");
     }
 
     //Serial.println(erro);
@@ -158,21 +166,37 @@ void calcula_erro(){
 
 void PID(){
     P = erro;
-    I = P + I_anterior;
+    I += P;
     D = erro-erro_anterior;
     
     valor_PID = (Kp*P) + (Ki*I) + (Kd*D);
     
-    I_anterior=I;
-    erro_anterior=erro;
+    erro_anterior = erro;
+/*
+    Serial.println("P: ");
+    Serial.print(Kp*P);
+    Serial.println("I: ");
+    Serial.print(Ki*I);
+    Serial.println("D: ");
+    Serial.print(Kd*D);
+*/
+    //Serial.print("Valor PID: ");
+    //Serial.println(valor_PID);
+
 }
 
 void motor(){
-    int vel_esquerdo = velocidade - valor_PID;
-    int vel_direito = velocidade + valor_PID;
+    int vel_esquerdo = velocidade + valor_PID;
+    int vel_direito = velocidade - valor_PID;
 
-    vel_esquerdo = constrain(vel_esquerdo,0,100); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
-    vel_direito = constrain(vel_direito,0,100); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_esquerdo = constrain(vel_esquerdo,0,40); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_direito = constrain(vel_direito,0,40); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+
+    //Serial.print("Vel_esquerdo: ");
+    //Serial.println(vel_esquerdo);
+
+    //Serial.print("Vel_direito: ");
+    //Serial.println(vel_direito);
 
     analogWrite(MAIN1,vel_esquerdo);
     analogWrite(MBIN1,vel_direito);
@@ -184,7 +208,7 @@ void stop_motor(){
 }
 
 void marcacoes_laterais(){
-    if(valores_borda[1] <= 300 && millis()-tempo_anterior2 >= 400){
+    if(valores_borda[1] <= 400 && millis()-tempo_anterior2 >= 400){
         tempo_anterior2 = millis();
         marcacao_esquerda++;
         //Serial.print("Sensor esquerda: ");
@@ -198,4 +222,53 @@ void marcacoes_laterais(){
         //Serial.println(marcacao_direita);
     }
     
+}
+
+void bluetooth_PID(){
+    if(bluetooth.available()){
+        char opcao = 'P';
+        Serial.println(opcao);
+        if(opcao == 'P'){
+            bluetooth.println("Digite o valor de Kp: ");
+            const char *c = leitura_bluetooth().c_str();
+            Kp = atof(c);
+            Serial.print("Kp ");
+            Serial.println(Kp,5);
+        }
+        else if(opcao == 'D'){
+            bluetooth.println("Digite o valor de Kd: ");
+            const char *c = leitura_bluetooth().c_str();
+            Kd = atof(c);
+            Serial.print("Kd ");
+            Serial.println(Kd,5);
+        }
+        else if(opcao == 'I'){
+            bluetooth.println("Digite o valor de Ki: ");
+            const char *c = leitura_bluetooth().c_str();
+            Ki = atof(c);
+            Serial.print("Ki ");
+            Serial.println(Ki,5);
+        }
+        else{
+           bluetooth.println("Opcao nao disponivel!"); 
+        }
+    }
+}
+
+String leitura_bluetooth(){
+    char dado_bluetooth;
+    char info[6];
+    uint8_t cont = 0;
+
+    while(bluetooth.available()){
+        dado_bluetooth = bluetooth.read();
+        if(dado_bluetooth != '\n'){
+            info[cont] = dado_bluetooth;
+            cont++;
+        }else{
+            info[cont] = '\0';
+            cont = 0;
+        }
+    }
+    return info;
 }
