@@ -42,6 +42,7 @@ void setup(){
     pinMode(LED2,OUTPUT);
     pinMode(MAIN1,OUTPUT);
     pinMode(MBIN1,OUTPUT);
+    pinMode (stdby, OUTPUT);
 
     stop_motor(); //Para os motores
 
@@ -55,6 +56,7 @@ void setup(){
 }
 
 void loop(){
+    digitalWrite (stdby, HIGH);
     calibracao();
     leitura();
 }

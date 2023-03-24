@@ -5,6 +5,7 @@
 #define MAIN2 PA1
 #define MBIN1 PA7
 #define MBIN2 PB0
+#define stdby PB9
 
 #define LED1 PA10
 #define LED2 PC13
