@@ -83,6 +83,7 @@ void setup() {
   pinMode(LED_L1, OUTPUT);
   pinMode(LED_L3, OUTPUT);
   pinMode(analogBat, INPUT_ANALOG);
+  pinMode (stdby, OUTPUT);
   //pinMode(MOSFET, OUTPUT);
   //pinMode(BUZZER_PIN, OUTPUT);
   Serial3.begin(9600);
@@ -101,6 +102,7 @@ void setup() {
 }
 
 void loop() {
+  digitalWrite (stdby, HIGH);
   tempo=millis();
   //bot2 parou de funfar, depois tem q apagar essA GAMBI
 
