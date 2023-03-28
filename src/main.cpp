@@ -14,13 +14,13 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 0.012, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
+float Kp = 0.001, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
 
 
 float erro = 0, P = 0, I = 0, D = 0, valor_PID = 0, erro_anterior = 0;
 int velocidade = 40; //Velocidade para os motores (pode e deve ser ajustada)
 
-int erros[11] = {5000, 4000, 3000, 2000, 1000, 0, -1000, -2000, -3000, -4000, -5000}; //Valores dos erros para cada situação de leitura dos sensores
+int erros[6] = {2000, 1000, 0, 0, -1000, -2000}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
 uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
 
@@ -98,6 +98,7 @@ void leitura(){
         if(digitalRead(BTN1)){
             calibrado = 0;
             ligado = 0;
+            stop_motor();
         }
         //Caso seja necessário averiguar os valores lidos pelos sensores, descomente essa parte abaixo:
         /*
@@ -122,48 +123,22 @@ void leitura(){
     }
 }
 
-void calcula_erro(){   
-    if(valores_sensor[0] > 1000 && valores_sensor[1] > 1000 && valores_sensor[2] > 1000 && valores_sensor[3] > 1000 && valores_sensor[4] > 1000 &&valores_sensor[5] <= 1000)
-        erro = erros[10];
-    
-    else if(valores_sensor[0] > 1000 && valores_sensor[1] > 1000 && valores_sensor[2] > 1000 && valores_sensor[3] > 1000 && valores_sensor[4] <= 1000 &&valores_sensor[5] <= 1000)
-        erro = erros[9];
-
-    else if(valores_sensor[0] > 1000 && valores_sensor[1] > 1000 && valores_sensor[2] > 1000 && valores_sensor[3] <= 1000 && valores_sensor[4] <= 1000 &&valores_sensor[5] <= 1000)
-        erro = erros[8];
-    
-    else if(valores_sensor[0] > 1000 && valores_sensor[1] > 1000 && valores_sensor[2] > 1000 && valores_sensor[3] <= 1000 && valores_sensor[4] <= 1000 &&valores_sensor[5] > 1000)
-        erro = erros[7];
-
-    else if(valores_sensor[0] > 1000 && valores_sensor[1] > 1000 && valores_sensor[2] <= 1000 && valores_sensor[3] <= 1000 && valores_sensor[4] <= 1000 &&valores_sensor[5] > 1000)
-        erro = erros[6];
-    
-    else if(valores_sensor[0] > 1000 && valores_sensor[1] <= 1000 && valores_sensor[2] <= 1000 && valores_sensor[3] <= 1000 && valores_sensor[4] <= 1000 &&valores_sensor[5] > 1000)
-        erro = erros[5];
-
-    else if(valores_sensor[0] > 1000 && valores_sensor[1] > 1000 && valores_sensor[2] <= 1000 && valores_sensor[3] <= 1000 && valores_sensor[4] > 1000 &&valores_sensor[5] > 1000)
-        erro = erros[5];
-        
-    else if(valores_sensor[0] > 1000 && valores_sensor[1] <= 1000 && valores_sensor[2] <= 1000 && valores_sensor[3] <= 1000 && valores_sensor[4] > 1000 &&valores_sensor[5] > 1000)
-        erro = erros[4];
-
-    else if(valores_sensor[0] > 1000 && valores_sensor[1] <= 1000 && valores_sensor[2] <= 1000 && valores_sensor[3] > 1000 && valores_sensor[4] > 1000 &&valores_sensor[5] > 1000)
-        erro = erros[3];
-
-    else if(valores_sensor[0] <= 1000 && valores_sensor[1] <= 1000 && valores_sensor[2] <= 1000 && valores_sensor[3] > 1000 && valores_sensor[4] > 1000 &&valores_sensor[5] > 1000)
-        erro = erros[2];
-
-    else if(valores_sensor[0] <= 1000 && valores_sensor[1] <= 1000 && valores_sensor[2] > 1000 && valores_sensor[3] > 1000 && valores_sensor[4] > 1000 &&valores_sensor[5] > 1000)
-        erro = erros[1];
-
-    else if(valores_sensor[0] <= 1000 && valores_sensor[1] > 1000 && valores_sensor[2] > 1000 && valores_sensor[3] > 1000 && valores_sensor[4] > 1000 &&valores_sensor[5] > 1000)
-        erro = erros[0];
-    
-    else{
-        //Serial.println("saiu");
+void calcula_erro(){ 
+    uint8_t cont_sensores = 0; 
+    for (uint8_t i = 0; i < 6; i++){
+        if(valores_sensor[i] <= 1000){
+            erro += erros[i];
+            cont_sensores++;
+        }
     }
 
+    if(cont_sensores == 0){
+        erro = 0;
+    }else{
+    erro = erro/cont_sensores;
+    erro = constrain(erro,-3000,3000);
     //Serial.println(erro);
+    }
 }
 
 void PID(){
@@ -188,17 +163,18 @@ void PID(){
 }
 
 void motor(){
-    int vel_esquerdo = velocidade + valor_PID;
-    int vel_direito = velocidade - valor_PID;
+    int vel_esquerdo = velocidade - valor_PID;
+    int vel_direito = velocidade + valor_PID;
 
-    vel_esquerdo = constrain(vel_esquerdo,0,40); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
-    vel_direito = constrain(vel_direito,0,40); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_esquerdo = constrain(vel_esquerdo,-255,255); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_direito = constrain(vel_direito,-255,255); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
 
-    //Serial.print("Vel_esquerdo: ");
-    //Serial.println(vel_esquerdo);
 
-    //Serial.print("Vel_direito: ");
-    //Serial.println(vel_direito);
+    Serial.print("Vel_esquerdo: ");
+    Serial.println(vel_esquerdo);
+
+    Serial.print("Vel_direito: ");
+    Serial.println(vel_direito);
 
     analogWrite(MAIN1,vel_esquerdo);
     analogWrite(MBIN1,vel_direito);
