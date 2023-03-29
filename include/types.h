@@ -1,10 +1,12 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#define MAIN1 PA2
-#define MAIN2 PA1
-#define MBIN1 PA7
-#define MBIN2 PB0
+#define MAIN1 PA7 //MOTOR DA ESQUERDA SENTIDO ANTI-HORÁRIO
+#define MAIN2 PB0 //MOTOR DA ESQUERDA SENTIDO HORÁRIO
+
+#define MBIN1 PA1 //MOTOR DA DIREITA SENTIDO ANTI-HORÁRIO
+#define MBIN2 PA2 //MOTOR DA DIREITA SENTIDO HORÁRIO
+
 #define stdby PB9
 
 #define LED1 PA10

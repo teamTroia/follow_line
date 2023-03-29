@@ -14,15 +14,19 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 0.001, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
+float Kp = 2, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
 
 
 float erro = 0, P = 0, I = 0, D = 0, valor_PID = 0, erro_anterior = 0;
 int velocidade = 40; //Velocidade para os motores (pode e deve ser ajustada)
 
-int erros[6] = {2000, 1000, 0, 0, -1000, -2000}; //Valores dos erros para cada situação de leitura dos sensores
+int erros[6] = {20, 10, 0, 0, -10, -20}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
 uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
+
+
+unsigned long int tempo = 0;
+float erro2 = 0;
 
 void calibracao();
 void leitura();
@@ -43,6 +47,7 @@ void setup(){
     pinMode(MAIN1,OUTPUT);
     pinMode(MBIN1,OUTPUT);
     pinMode (stdby, OUTPUT);
+    digitalWrite (stdby, HIGH);
 
     stop_motor(); //Para os motores
 
@@ -56,7 +61,6 @@ void setup(){
 }
 
 void loop(){
-    digitalWrite (stdby, HIGH);
     calibracao();
     leitura();
 }
@@ -118,6 +122,10 @@ void leitura(){
         delay(250);
         */
         calcula_erro();
+        if(micros() - tempo >= 2000){
+            erro2 = erro;
+        }
+        tempo = micros();
         PID();
         motor();
     }
@@ -137,18 +145,18 @@ void calcula_erro(){
     }else{
     erro = erro/cont_sensores;
     erro = constrain(erro,-3000,3000);
-    //Serial.println(erro);
+    Serial.println(erro);
     }
 }
 
 void PID(){
-    P = erro;
+    P = erro2;
     I += P;
-    D = erro-erro_anterior;
+    D = erro2-erro_anterior;
     
     valor_PID = (Kp*P) + (Ki*I) + (Kd*D);
     
-    erro_anterior = erro;
+    erro_anterior = erro2;
 /*
     Serial.println("P: ");
     Serial.print(Kp*P);
@@ -166,8 +174,8 @@ void motor(){
     int vel_esquerdo = velocidade - valor_PID;
     int vel_direito = velocidade + valor_PID;
 
-    vel_esquerdo = constrain(vel_esquerdo,-255,255); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
-    vel_direito = constrain(vel_direito,-255,255); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_esquerdo = constrain(vel_esquerdo,0,50); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_direito = constrain(vel_direito,0,50); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
 
 
     Serial.print("Vel_esquerdo: ");
@@ -177,12 +185,14 @@ void motor(){
     Serial.println(vel_direito);
 
     analogWrite(MAIN1,vel_esquerdo);
-    analogWrite(MBIN1,vel_direito);
+    analogWrite(MBIN2,vel_direito);
 }
 
 void stop_motor(){
     digitalWrite(MAIN1,0);
     digitalWrite(MBIN1,0);
+    digitalWrite(MAIN2,0);
+    digitalWrite(MBIN2,0);
 }
 
 void marcacoes_laterais(){
