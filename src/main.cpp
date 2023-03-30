@@ -14,11 +14,11 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 2, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
+float Kp = 1.2, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
 
 
 float erro = 0, P = 0, I = 0, D = 0, valor_PID = 0, erro_anterior = 0;
-int velocidade = 40; //Velocidade para os motores (pode e deve ser ajustada)
+int velocidade = 50; //Velocidade para os motores (pode e deve ser ajustada)
 
 int erros[6] = {20, 10, 0, 0, -10, -20}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
@@ -46,8 +46,8 @@ void setup(){
     pinMode(LED2,OUTPUT);
     pinMode(MAIN1,OUTPUT);
     pinMode(MBIN1,OUTPUT);
-    pinMode (stdby, OUTPUT);
-    digitalWrite (stdby, HIGH);
+    pinMode (PWMA, OUTPUT);
+    pinMode (PWMB, OUTPUT);
 
     stop_motor(); //Para os motores
 
@@ -145,7 +145,7 @@ void calcula_erro(){
     }else{
     erro = erro/cont_sensores;
     erro = constrain(erro,-3000,3000);
-    Serial.println(erro);
+    //Serial.println(erro);
     }
 }
 
@@ -174,8 +174,8 @@ void motor(){
     int vel_esquerdo = velocidade - valor_PID;
     int vel_direito = velocidade + valor_PID;
 
-    vel_esquerdo = constrain(vel_esquerdo,0,50); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
-    vel_direito = constrain(vel_direito,0,50); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_esquerdo = constrain(vel_esquerdo,0,100); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_direito = constrain(vel_direito,0,100); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
 
 
     Serial.print("Vel_esquerdo: ");
@@ -184,8 +184,11 @@ void motor(){
     Serial.print("Vel_direito: ");
     Serial.println(vel_direito);
 
-    analogWrite(MAIN1,vel_esquerdo);
-    analogWrite(MBIN2,vel_direito);
+    analogWrite(PWMA,vel_esquerdo);
+    digitalWrite(MAIN1,1);
+    analogWrite(PWMB,vel_direito);
+    digitalWrite(MBIN1,1);
+
 }
 
 void stop_motor(){

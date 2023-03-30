@@ -7,10 +7,12 @@
 #define MBIN1 PA1 //MOTOR DA DIREITA SENTIDO ANTI-HORÁRIO
 #define MBIN2 PA2 //MOTOR DA DIREITA SENTIDO HORÁRIO
 
-#define stdby PB9
+#define PWMA PB8
+#define PWMB PB9
 
 #define LED1 PA10
 #define LED2 PC13
 
 #define BTN1 PB3
 #define BTN2 PB4
+
