@@ -12,21 +12,20 @@ const uint8_t qtd_borda = 2; //Definição da quantidade de sensores de borda
 uint16_t valores_sensor[qtd_sensores]; //Criação do vetor para armazenar os valores lidos pelos sensores frontais
 uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valores lidos pelos sensores de borda
 
+
 bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 1.2, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
-
+float Kp = 1.675, Kd = 9.5, Ki = 0.006; //Constantes multiplicativas para o PID
 
 float erro = 0, P = 0, I = 0, D = 0, valor_PID = 0, erro_anterior = 0;
-int velocidade = 50; //Velocidade para os motores (pode e deve ser ajustada)
+int velocidade = 80; //Velocidade para os motores (pode e deve ser ajustada)
+uint8_t velocidade_maxima = 130;
 
 int erros[6] = {20, 10, 0, 0, -10, -20}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
 uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
 
-
-unsigned long int tempo = 0;
-float erro2 = 0;
+String opcao_ajuste = "N";
 
 void calibracao();
 void leitura();
@@ -36,6 +35,7 @@ void motor();
 void stop_motor();
 void marcacoes_laterais();
 void bluetooth_PID();
+void bluetooth_opcoes();
 String leitura_bluetooth();
 
 void setup(){
@@ -46,6 +46,8 @@ void setup(){
     pinMode(LED2,OUTPUT);
     pinMode(MAIN1,OUTPUT);
     pinMode(MBIN1,OUTPUT);
+    pinMode(MAIN2,OUTPUT);
+    pinMode(MBIN2,OUTPUT);
     pinMode (PWMA, OUTPUT);
     pinMode (PWMB, OUTPUT);
 
@@ -69,10 +71,10 @@ void calibracao(){
     while ((!digitalRead(BTN2)) && (calibrado == 0)) { //Fica preso no while até que o botão de calibração seja pressionado
     digitalWrite(LED1, HIGH); //Os leds ficam acesso até que o botão seja pressionado
     digitalWrite(LED2, HIGH); //Os leds ficam acesso até que o botão seja pressionado
-
-    bluetooth_PID();
+    stop_motor();
     //Serial.println("GO"); //A mensagem "Go" é exibida no monitor
 
+    bluetooth_opcoes(); 
     delay(100);
 
     if(digitalRead(BTN1)){
@@ -102,7 +104,6 @@ void leitura(){
         if(digitalRead(BTN1)){
             calibrado = 0;
             ligado = 0;
-            stop_motor();
         }
         //Caso seja necessário averiguar os valores lidos pelos sensores, descomente essa parte abaixo:
         /*
@@ -121,11 +122,8 @@ void leitura(){
         }
         delay(250);
         */
+        bluetooth_PID();
         calcula_erro();
-        if(micros() - tempo >= 2000){
-            erro2 = erro;
-        }
-        tempo = micros();
         PID();
         motor();
     }
@@ -150,20 +148,21 @@ void calcula_erro(){
 }
 
 void PID(){
-    P = erro2;
+    P = erro;
     I += P;
-    D = erro2-erro_anterior;
+    I = constrain(I,-100,100); 
+    D = erro - erro_anterior;
     
     valor_PID = (Kp*P) + (Ki*I) + (Kd*D);
     
-    erro_anterior = erro2;
+    erro_anterior = erro;
 /*
-    Serial.println("P: ");
-    Serial.print(Kp*P);
-    Serial.println("I: ");
-    Serial.print(Ki*I);
-    Serial.println("D: ");
-    Serial.print(Kd*D);
+    Serial.print("P: ");
+    Serial.println(Kp*P);
+    Serial.print("I: ");
+    Serial.println(Ki*I);
+    Serial.print("D: ");
+    Serial.println(Kd*D);
 */
     //Serial.print("Valor PID: ");
     //Serial.println(valor_PID);
@@ -174,21 +173,47 @@ void motor(){
     int vel_esquerdo = velocidade - valor_PID;
     int vel_direito = velocidade + valor_PID;
 
-    vel_esquerdo = constrain(vel_esquerdo,0,100); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
-    vel_direito = constrain(vel_direito,0,100); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_esquerdo = constrain(vel_esquerdo,-velocidade_maxima,velocidade_maxima); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
+    vel_direito = constrain(vel_direito,-velocidade_maxima,velocidade_maxima); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
 
-
+/*
     Serial.print("Vel_esquerdo: ");
     Serial.println(vel_esquerdo);
 
     Serial.print("Vel_direito: ");
     Serial.println(vel_direito);
+*/
+/*
+    if(vel_esquerdo > 0){
+        digitalWrite(MAIN2,LOW);
+        analogWrite(PWMA,vel_esquerdo);
+        digitalWrite(MAIN1,HIGH);
+    }else if(vel_esquerdo == 0){
+        digitalWrite(PWMA,HIGH);
+        digitalWrite(MAIN1,HIGH);
+        digitalWrite(MAIN2,HIGH);
+    }else{
+        vel_esquerdo = -vel_esquerdo;
+        digitalWrite(MAIN1,LOW);
+        digitalWrite(MAIN2,HIGH);
+        analogWrite(PWMA,vel_esquerdo);
+    }
 
-    analogWrite(PWMA,vel_esquerdo);
-    digitalWrite(MAIN1,1);
-    analogWrite(PWMB,vel_direito);
-    digitalWrite(MBIN1,1);
-
+    if(vel_direito > 0){
+        digitalWrite(MBIN2,LOW);
+        analogWrite(PWMB,vel_direito);
+        digitalWrite(MBIN1,HIGH);
+    }else if(vel_direito == 0){
+        digitalWrite(PWMB,HIGH);
+        digitalWrite(MBIN1,HIGH);
+        digitalWrite(MBIN2,HIGH);
+    }else{
+        vel_direito = -vel_direito;
+        digitalWrite(MBIN1,LOW);
+        digitalWrite(MBIN2,HIGH);
+        analogWrite(PWMB,vel_direito);
+    }
+*/
 }
 
 void stop_motor(){
@@ -196,6 +221,8 @@ void stop_motor(){
     digitalWrite(MBIN1,0);
     digitalWrite(MAIN2,0);
     digitalWrite(MBIN2,0);
+    digitalWrite(PWMA,0);
+    digitalWrite(PWMB,0);
 }
 
 void marcacoes_laterais(){
@@ -217,33 +244,48 @@ void marcacoes_laterais(){
 
 void bluetooth_PID(){
     if(bluetooth.available()){
-        char opcao = 'P';
+        const char* opcao = opcao_ajuste.c_str();
         Serial.println(opcao);
-        if(opcao == 'P'){
+        if(opcao[0] == 'P'){
             bluetooth.println("Digite o valor de Kp: ");
             const char *c = leitura_bluetooth().c_str();
             Kp = atof(c);
-            Serial.print("Kp ");
+            Serial.print("Kp: ");
             Serial.println(Kp,5);
         }
-        else if(opcao == 'D'){
+        else if(opcao[0] == 'D'){
             bluetooth.println("Digite o valor de Kd: ");
             const char *c = leitura_bluetooth().c_str();
             Kd = atof(c);
-            Serial.print("Kd ");
+            Serial.print("Kd: ");
             Serial.println(Kd,5);
         }
-        else if(opcao == 'I'){
+        else if(opcao[0] == 'I'){
             bluetooth.println("Digite o valor de Ki: ");
             const char *c = leitura_bluetooth().c_str();
             Ki = atof(c);
-            Serial.print("Ki ");
+            Serial.print("Ki: ");
             Serial.println(Ki,5);
+        }
+        else if(opcao[0] == 'V'){
+            bluetooth.println("Digite o valor da velocidade: ");
+            const char *c = leitura_bluetooth().c_str();
+            velocidade = atoi(c);
+            Serial.print("Velocidade: ");
+            Serial.println(velocidade,5);
         }
         else{
            bluetooth.println("Opcao nao disponivel!"); 
         }
     }
+}
+
+void bluetooth_opcoes(){
+    if(bluetooth.available()){
+        bluetooth.println("Digite uma opcao: ");
+        opcao_ajuste = leitura_bluetooth();
+    }
+    Serial.println(opcao_ajuste);
 }
 
 String leitura_bluetooth(){
