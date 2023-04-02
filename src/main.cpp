@@ -183,7 +183,7 @@ void motor(){
     Serial.print("Vel_direito: ");
     Serial.println(vel_direito);
 */
-/*
+
     if(vel_esquerdo > 0){
         digitalWrite(MAIN2,LOW);
         analogWrite(PWMA,vel_esquerdo);
@@ -213,7 +213,7 @@ void motor(){
         digitalWrite(MBIN2,HIGH);
         analogWrite(PWMB,vel_direito);
     }
-*/
+
 }
 
 void stop_motor(){
@@ -273,6 +273,13 @@ void bluetooth_PID(){
             velocidade = atoi(c);
             Serial.print("Velocidade: ");
             Serial.println(velocidade,5);
+        }
+        else if(opcao[0] == 'S'){
+            bluetooth.println("Digite o valor da velocidade maxima: ");
+            const char *c = leitura_bluetooth().c_str();
+            velocidade_maxima = atoi(c);
+            Serial.print("Velocidade: ");
+            Serial.println(velocidade_maxima,5);
         }
         else{
            bluetooth.println("Opcao nao disponivel!"); 
