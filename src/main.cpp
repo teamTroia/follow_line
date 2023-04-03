@@ -15,17 +15,20 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 1.675, Kd = 9.5, Ki = 0.006; //Constantes multiplicativas para o PID
+float Kp = 1.7, Kd = 8, Ki = 0.006; //Constantes multiplicativas para o PID
 
 float erro = 0, P = 0, I = 0, D = 0, valor_PID = 0, erro_anterior = 0;
 int velocidade = 80; //Velocidade para os motores (pode e deve ser ajustada)
-uint8_t velocidade_maxima = 130;
+uint8_t velocidade_maxima = 90;
 
 int erros[6] = {20, 10, 0, 0, -10, -20}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
 uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
 
 String opcao_ajuste = "N";
+
+
+char trechos[] = {'R','C','R','C','R','C','R','C','R','C','C','C','R','C','R','C','R','C','R','C','R','C','R','C','R','C','R','C','R'};
 
 void calibracao();
 void leitura();
@@ -79,7 +82,7 @@ void calibracao(){
 
     if(digitalRead(BTN1)){
         Serial.println("calibrando"); //Mensagem exibida no monitor serial indicando calibração
-        for (int i = 0; i < 10; i++){ //Aqui tem que ver quantas vezes ele tem q passar pelo processo de calibração
+        for (int i = 0; i < 20; i++){ //Aqui tem que ver quantas vezes ele tem q passar pelo processo de calibração
             sensores.calibrate();
     
             digitalWrite(LED1, LOW); //Pisca os leds
@@ -88,8 +91,12 @@ void calibracao(){
             digitalWrite(LED1, HIGH); //Pisca os leds
             digitalWrite(LED2, HIGH); //Pisca os leds
             delay(200);
+            borda.calibrate();
         }
         calibrado = 1; //Indica que o robô já foi calibrado e pode sair do loop de calibração
+        marcacao_direita = 0;
+        marcacao_esquerda = 0;
+        ligado = 0;
     }
   }
 }
@@ -113,7 +120,7 @@ void leitura(){
             Serial.print(": ");
             Serial.println(valores_sensor[i]);
         }
-        
+        */
         for (uint8_t i = 0; i < 2; i++){
             Serial.print("Sensor borda ");
             Serial.print(i);
@@ -121,7 +128,7 @@ void leitura(){
             Serial.println(valores_borda[i]);
         }
         delay(250);
-        */
+        
         bluetooth_PID();
         calcula_erro();
         PID();
@@ -143,7 +150,7 @@ void calcula_erro(){
     }else{
     erro = erro/cont_sensores;
     erro = constrain(erro,-3000,3000);
-    //Serial.println(erro);
+    
     }
 }
 
@@ -226,20 +233,37 @@ void stop_motor(){
 }
 
 void marcacoes_laterais(){
-    if(valores_borda[1] <= 400 && millis()-tempo_anterior2 >= 400){
+    if(valores_borda[1] <= 1000 && millis()-tempo_anterior2 >= 500){
         tempo_anterior2 = millis();
         marcacao_esquerda++;
         //Serial.print("Sensor esquerda: ");
         //Serial.println(marcacao_esquerda);
     }
     
-    if(valores_borda[0] <= 400 && millis()-tempo_anterior >= 400){
+    if(valores_borda[0] <= 1000 && millis()-tempo_anterior >= 500){
         tempo_anterior = millis();
         marcacao_direita++;
         //Serial.print("Sensor direita: ");
         //Serial.println(marcacao_direita);
     }
-    
+
+    if(marcacao_direita >= 2){
+        calibrado = 0;
+    }
+/*
+    switch (trechos[marcacao_esquerda]){
+    case 'R':
+        velocidade = 80;
+        velocidade_maxima = 130;
+        break;
+
+    case 'C':
+        velocidade = 60;
+        velocidade_maxima = 100;
+        break;
+    }
+    bluetooth.println(velocidade);
+    */
 }
 
 void bluetooth_PID(){
