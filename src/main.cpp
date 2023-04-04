@@ -15,11 +15,11 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 1.7, Kd = 8, Ki = 0.006; //Constantes multiplicativas para o PID
+float Kp = 1.1, Kd = 2, Ki = 0.002; //Constantes multiplicativas para o PID
 
 float erro = 0, P = 0, I = 0, D = 0, valor_PID = 0, erro_anterior = 0;
-int velocidade = 80; //Velocidade para os motores (pode e deve ser ajustada)
-uint8_t velocidade_maxima = 90;
+int velocidade = 70; //Velocidade para os motores (pode e deve ser ajustada)
+uint8_t velocidade_maxima = 80;
 
 int erros[6] = {20, 10, 0, 0, -10, -20}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
@@ -103,6 +103,8 @@ void calibracao(){
 
 void leitura(){
     if(calibrado && (digitalRead(BTN2) or ligado)){
+        digitalWrite(LED1,LOW);
+        digitalWrite(LED2,LOW);
         sensores.read(valores_sensor);
         borda.read(valores_borda);
         ligado = 1;
@@ -120,7 +122,7 @@ void leitura(){
             Serial.print(": ");
             Serial.println(valores_sensor[i]);
         }
-        */
+        
         for (uint8_t i = 0; i < 2; i++){
             Serial.print("Sensor borda ");
             Serial.print(i);
@@ -128,7 +130,7 @@ void leitura(){
             Serial.println(valores_borda[i]);
         }
         delay(250);
-        
+        */
         bluetooth_PID();
         calcula_erro();
         PID();
@@ -236,6 +238,8 @@ void marcacoes_laterais(){
     if(valores_borda[1] <= 1000 && millis()-tempo_anterior2 >= 500){
         tempo_anterior2 = millis();
         marcacao_esquerda++;
+        digitalWrite(LED1,HIGH);
+        delay(20);
         //Serial.print("Sensor esquerda: ");
         //Serial.println(marcacao_esquerda);
     }
@@ -243,14 +247,14 @@ void marcacoes_laterais(){
     if(valores_borda[0] <= 1000 && millis()-tempo_anterior >= 500){
         tempo_anterior = millis();
         marcacao_direita++;
-        //Serial.print("Sensor direita: ");
-        //Serial.println(marcacao_direita);
+        Serial.print("Sensor direita: ");
+        Serial.println(marcacao_direita);
     }
-
+/*
     if(marcacao_direita >= 2){
         calibrado = 0;
     }
-/*
+
     switch (trechos[marcacao_esquerda]){
     case 'R':
         velocidade = 80;
