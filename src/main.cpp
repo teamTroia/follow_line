@@ -21,7 +21,7 @@ float erro = 0, P = 0, I = 0, D = 0, valor_PID = 0, erro_anterior = 0;
 int velocidade = 70; //Velocidade para os motores (pode e deve ser ajustada)
 uint8_t velocidade_maxima = 80;
 
-int erros[6] = {20, 10, 0, 0, -10, -20}; //Valores dos erros para cada situação de leitura dos sensores
+int erros[6] = {20, 16, 0, 0, -16, -20}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
 uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
 
@@ -235,19 +235,21 @@ void stop_motor(){
 }
 
 void marcacoes_laterais(){
-    if(valores_borda[1] <= 1000 && millis()-tempo_anterior2 >= 500){
+    if(valores_borda[1] <= 1200 && millis()-tempo_anterior2 >= 400){
         tempo_anterior2 = millis();
         marcacao_esquerda++;
         digitalWrite(LED1,HIGH);
         delay(20);
-        //Serial.print("Sensor esquerda: ");
-        //Serial.println(marcacao_esquerda);
+        bluetooth.println ("Sensor esquerda: ");
+        bluetooth.println (valores_borda[1]);
     }
     
     if(valores_borda[0] <= 1000 && millis()-tempo_anterior >= 500){
         tempo_anterior = millis();
         marcacao_direita++;
         Serial.print("Sensor direita: ");
+        bluetooth.println ("Sensor direita: ");
+        bluetooth.println (marcacao_direita);
         Serial.println(marcacao_direita);
     }
 /*
