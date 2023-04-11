@@ -15,11 +15,11 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 1.1, Kd = 2, Ki = 0.002; //Constantes multiplicativas para o PID
+float Kp = 3.5, Kd = 8, Ki = 0.002; //Constantes multiplicativas para o PID
 
 float erro = 0, P = 0, I = 0, D = 0, valor_PID = 0, erro_anterior = 0;
-int velocidade = 70; //Velocidade para os motores (pode e deve ser ajustada)
-uint8_t velocidade_maxima = 80;
+int velocidade = 95; //Velocidade para os motores (pode e deve ser ajustada)
+uint8_t velocidade_maxima = 115;
 
 int erros[6] = {20, 16, 0, 0, -16, -20}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
@@ -252,6 +252,13 @@ void marcacoes_laterais(){
         bluetooth.println (marcacao_direita);
         Serial.println(marcacao_direita);
     }
+
+    if (marcacao_direita == 2) { // número de marcações para parar
+    motor.stop_Motor();
+    parou = 1;
+    digitalWrite(LED_L1, HIGH);
+    digitalWrite(LED_L2, HIGH);
+  }
 /*
     if(marcacao_direita >= 2){
         calibrado = 0;
