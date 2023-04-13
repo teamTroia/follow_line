@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+
 #define MAIN1 PA7 //MOTOR DA ESQUERDA SENTIDO ANTI-HORÁRIO
 #define MAIN2 PB0 //MOTOR DA ESQUERDA SENTIDO HORÁRIO
 
