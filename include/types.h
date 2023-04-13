@@ -16,3 +16,5 @@
 #define BTN1 PB3
 #define BTN2 PB4
 
+#define bluetooth_activate 1
+
