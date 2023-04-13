@@ -16,11 +16,11 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 13.5, Kd = 50, Ki = 0; //Constantes multiplicativas para o PID
+float Kp = 9, Kd = 10, Ki = 0; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
-int velocidade = 110; //Velocidade para os motores (pode e deve ser ajustada)
-uint8_t velocidade_maxima = 255;
+int velocidade = 95; //Velocidade para os motores (pode e deve ser ajustada)
+uint8_t velocidade_maxima = 115;
 
 int erros[6] = {26, 16, 6, -6, -16, -26}; //Valores dos erros para cada situação de leitura dos sensores
 uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
