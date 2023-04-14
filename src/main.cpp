@@ -14,16 +14,16 @@ uint16_t valores_sensor[qtd_sensores]; //Criação do vetor para armazenar os va
 uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valores lidos pelos sensores de borda
 
 
-bool calibrado = 0, ligado = 0; //Indica se já foi calibrado e se ta ligado, respectivamente
+bool calibrado = 0, ligado = 0, parada = 1; //Indica se já foi calibrado e se ta ligado, respectivamente
 
 float Kp = 9, Kd = 10, Ki = 0; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
-int velocidade = 95; //Velocidade para os motores (pode e deve ser ajustada)
-uint8_t velocidade_maxima = 115;
+int velocidade = 110; //Velocidade para os motores (pode e deve ser ajustada)
+uint8_t velocidade_maxima = 130;
 
 int erros[6] = {26, 16, 6, -6, -16, -26}; //Valores dos erros para cada situação de leitura dos sensores
-uint64_t tempo_anterior = 0, tempo_anterior2 = 0;
+unsigned long int tempo_anterior = 0, tempo_anterior2 = 0, tempo_parada = 0;
 uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
 
 Motor motor = Motor();
@@ -97,6 +97,10 @@ void calibracao(){
 
 void leitura(){
     if(calibrado && (digitalRead(BTN2) or ligado)){
+        if(parada){
+            tempo_parada = millis();
+            parada = 0;
+        }
         digitalWrite(LED1,LOW);
         digitalWrite(LED2,LOW);
         sensores.readCalibrated(valores_sensor);
@@ -181,22 +185,18 @@ void marcacoes_laterais(){
     if(valores_borda[1] <= 10 && millis()-tempo_anterior2 >= 350){
         tempo_anterior2 = millis();
         marcacao_esquerda++;
-        digitalWrite(LED1,HIGH);
-        delay(20);
     }
     
     if(valores_borda[0] <= 5 && millis()-tempo_anterior >= 350){
         tempo_anterior = millis();
         marcacao_direita++;
-        digitalWrite(LED2,HIGH);
-        delay(20);
     }
-/*
-    if (marcacao_direita >= 6){ // número de marcações para parar
+
+    if (millis() - tempo_parada >= 37000){ // número de marcações para parar
         delay(500);
         calibrado = 0;
     }
-
+/*
 
     if (trechos1[marcacao_esquerda]){
         velocidade = 75;
