@@ -1,4 +1,4 @@
-# Follow Line - Lightning
+# Follow Line - Folou
 
 ## Esquemático Follow
 
@@ -11,6 +11,10 @@ A tensão de 8.4v é referente a bateria de 2s utilizada no projeto. A tensão d
 Quanto a funcionalidade de cada componente, o **STM32** controla o funcionamento do seguidor de linha. A **ponte-h** ([TB6612FNG](https://pdf1.alldatasheet.com/datasheet-pdf/view/807693/TOSHIBA/TB6612FNG.html)) utilizada  controla a velocidade e o sentido dos motores. Os [**encoders**](https://www.pololu.com/product/2598) funcionam como sensores que conseguem captar a velocidade de rotação dos motores. Os **sensores de borda** ([QRE-1113](https://pdf1.alldatasheet.com/datasheet-pdf/view/54347/FAIRCHILD/QRE1113.html)) são responsáveis por ler a pista e informar ao microcontrolador as ações a serem executadas.  
 
 O **sensor giroscópio** ([MPU6050](https://pdf1.alldatasheet.com/datasheet-pdf/view/1132807/TDK/MPU-6050.html)) detecta a velocidade angular do Follow, ou seja, ele consegue corrigir a movimentação de modo a tornar o robô mais estável. Já o **módulo bluetooth** possibilita a alteração de parâmetros do código sem cabos. 
+
+A **placa do Folou** pode ser aberta no Altium pelo link: [clique aqui](https://drive.google.com/file/d/1bIMbuUDfYTGX7AZl_Yzk-90sEEceC01L/view?usp=share_link). 
+
+Já a **lista de componentes** utilizados, inclusive capacitores e resistores pode ser encontrada mais facilmente no link: [clique aqui](https://drive.google.com/file/d/1mZapJbVWj3NlYjh2zEogA1wd6Zr_QdYQ/view?usp=share_link)
 
 ```mermaid
 
@@ -48,7 +52,7 @@ O **sensor giroscópio** ([MPU6050](https://pdf1.alldatasheet.com/datasheet-pdf/
 
 ## Código Follow 
 
-O Lightning possui dois botões, sendo um deles responsável pela calibração. Esse processo é responsável por definir o que o robô deve entender como sendo branco ou preto. Lembrando que o sensor QRE-1113 é um sensor de refletância. Dessa forma, quando este identifica a cor "preta", o sensor informa um valor alto e, no caso caso do "branco", um valor baixo. O código da calibração e do controle de velocidade dos motores já encontram-se comentadas no código atual do follow.  
+O Folou possui dois botões, sendo um deles responsável pela calibração. Esse processo é responsável por definir o que o robô deve entender como sendo branco ou preto. Lembrando que o sensor QRE-1113 é um sensor de refletância. Dessa forma, quando este identifica a cor "preta", o sensor informa um valor alto e, no caso caso do "branco", um valor baixo. O código da calibração e do controle de velocidade dos motores já encontram-se comentadas no código atual do follow.  
 
 Já em relação ao PID (Proporcional, Derivado e Integral), ele é um dos esquemas de controle mais comuns. Há muitas maneiras de ajustar um loop PID.
 
@@ -80,7 +84,7 @@ H-->|Não|I;
 I-->J;
 ```
 ## ST-Link / Windows
-Abaixo encontram-se os procedimentos para conseguir passar corretamente o código para o STM32 do Lightning, utilizando-se o VS Code. Tais procedimentos também podem ser visualizados no vídeo [tutorial](https://www.youtube.com/watch?v=mOzsBYo3h4M&ab_channel=TechHelp).
+Abaixo encontram-se os procedimentos para conseguir passar corretamente o código para o STM32 do Folou, utilizando-se o VS Code. Tais procedimentos também podem ser visualizados no vídeo [tutorial](https://www.youtube.com/watch?v=mOzsBYo3h4M&ab_channel=TechHelp).
 
 Antes de passar o código, é preciso passar o bootloader no STM32. Para realizar esse processo, deve-se colocar pelo menos um jumper na posição 1 (um) do STM e fazer o download  do [ST-Link Utility](https://www.st.com/en/development-tools/stsw-link004.html) e abrir, dentro do programa baixado e instalado, o arquivo [generic_boot20_pc13.bin](https://github.com/rogerclarkmelbourne/STM32duino-bootloader/tree/master/binaries). Dentro do ST-Link Utility:
 
