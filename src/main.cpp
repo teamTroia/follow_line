@@ -7,7 +7,7 @@
 QTRSensors sensores; //Declaração dos sensores da frente
 QTRSensors borda; //Declaração dos sensores de borda
 
-const uint8_t qtd_sensores = 6; //Definição da quantidade de sensores frontais
+const uint8_t qtd_sensores = 8; //Definição da quantidade de sensores frontais
 const uint8_t qtd_borda = 2; //Definição da quantidade de sensores de borda
 
 uint16_t valores_sensor[qtd_sensores]; //Criação do vetor para armazenar os valores lidos pelos sensores frontais
@@ -16,13 +16,13 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0, parada = 1; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 3, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
+float Kp = 13, Kd = 50, Ki = 0; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
 int velocidade = 60; //Velocidade para os motores (pode e deve ser ajustada)
 uint8_t velocidade_maxima = 70;
 
-int erros[6] = {26, 16, 6, -6, -16, -26}; //Valores dos erros para cada situação de leitura dos sensores
+int erros[qtd_sensores] = {30, 26, 16, 6, -6, -16, -26, -30}; //Valores dos erros para cada situação de leitura dos sensores
 unsigned long int tempo_anterior = 0, tempo_anterior2 = 0, tempo_parada = 0;
 uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
 
@@ -50,7 +50,7 @@ void setup(){
     borda.setTypeRC(); //Define os sensores de borda como digitais 
 
     borda.setSensorPins((const uint8_t[]){PB10, PA8},qtd_borda); //Definição dos pinos dos sensores de borda (direita esquerda, nessa ordem)
-    sensores.setSensorPins((const uint8_t[]){PA6, PA5, PA4, PA3, PA0, PB1}, qtd_sensores); //Definição dos pinos dos sensores frontais, da ESQUERDA PARA DIREITA (lembra que eu observei a Top Layer, ou seja, PA0 = S1)
+    sensores.setSensorPins((const uint8_t[]){PA15, PA6, PA5, PA4, PA3, PA0, PB1, PA9}, qtd_sensores); //Definição dos pinos dos sensores frontais, da ESQUERDA PARA DIREITA (lembra que eu observei a Top Layer, ou seja, PA0 = S1)
     Serial.begin(9600); //Inicialização do monitor serial
 
     if(bluetooth_activate)
@@ -113,22 +113,22 @@ void leitura(){
             ligado = 0;
         }
         //Caso seja necessário averiguar os valores lidos pelos sensores, descomente essa parte abaixo:
-        
+        /*
         for (uint8_t i = 0; i < qtd_sensores; i++){
             Serial.print("Sensor");
             Serial.print(i+1);
             Serial.print(": ");
             Serial.println(valores_sensor[i]);
         }
-        /*
+        */
         for (uint8_t i = 0; i < 2; i++){
             Serial.print("Sensor borda ");
             Serial.print(i);
             Serial.print(": ");
             Serial.println(valores_borda[i]);
         }
-        delay(250);
-        */
+    
+        
         
         motor.speed_motor(PID(calcula_erro()),velocidade,velocidade_maxima);
 
@@ -140,7 +140,7 @@ void leitura(){
 float calcula_erro(){ 
     float erro = 0;
     uint8_t cont_sensores = 0; 
-    for (uint8_t i = 0; i < 6; i++){
+    for (uint8_t i = 0; i < qtd_sensores; i++){
         if(valores_sensor[i] <= 500){
             erro += erros[i];
             cont_sensores++;
@@ -182,22 +182,24 @@ float PID(float erro){
 }
 
 void marcacoes_laterais(){
-    if(valores_borda[1] <= 10 && millis()-tempo_anterior2 >= 350){
+    if(valores_borda[0] <= 150 && millis()-tempo_anterior2 >= 350){
         tempo_anterior2 = millis();
         marcacao_esquerda++;
     }
     
-    if(valores_borda[0] <= 5 && millis()-tempo_anterior >= 350){
+    if(valores_borda[1] <= 150 && millis()-tempo_anterior >= 350){
         tempo_anterior = millis();
         marcacao_direita++;
+        digitalWrite(LED1, HIGH);
+        delay(10);
     }
 
-    if (millis() - tempo_parada >= 37000){ // número de marcações para parar
+    if (marcacao_direita >= 6){ // número de marcações para parar
         delay(500);
         calibrado = 0;
     }
-/*
 
+/*
     if (trechos1[marcacao_esquerda]){
         velocidade = 75;
         velocidade_maxima = 95;
