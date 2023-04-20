@@ -16,11 +16,11 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0, parada = 1; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 9, Kd = 10, Ki = 0; //Constantes multiplicativas para o PID
+float Kp = 3, Kd = 0, Ki = 0; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
-int velocidade = 110; //Velocidade para os motores (pode e deve ser ajustada)
-uint8_t velocidade_maxima = 130;
+int velocidade = 60; //Velocidade para os motores (pode e deve ser ajustada)
+uint8_t velocidade_maxima = 70;
 
 int erros[6] = {26, 16, 6, -6, -16, -26}; //Valores dos erros para cada situação de leitura dos sensores
 unsigned long int tempo_anterior = 0, tempo_anterior2 = 0, tempo_parada = 0;
@@ -50,7 +50,7 @@ void setup(){
     borda.setTypeRC(); //Define os sensores de borda como digitais 
 
     borda.setSensorPins((const uint8_t[]){PB10, PA8},qtd_borda); //Definição dos pinos dos sensores de borda (direita esquerda, nessa ordem)
-    sensores.setSensorPins((const uint8_t[]){PA0, PA3, PA4, PA5, PA6, PB1}, qtd_sensores); //Definição dos pinos dos sensores frontais, da ESQUERDA PARA DIREITA (lembra que eu observei a Top Layer, ou seja, PA0 = S1)
+    sensores.setSensorPins((const uint8_t[]){PA6, PA5, PA4, PA3, PA0, PB1}, qtd_sensores); //Definição dos pinos dos sensores frontais, da ESQUERDA PARA DIREITA (lembra que eu observei a Top Layer, ou seja, PA0 = S1)
     Serial.begin(9600); //Inicialização do monitor serial
 
     if(bluetooth_activate)
@@ -104,7 +104,7 @@ void leitura(){
         digitalWrite(LED1,LOW);
         digitalWrite(LED2,LOW);
         sensores.readCalibrated(valores_sensor);
-        borda.readCalibrated(valores_borda);
+        borda.read(valores_borda);
         ligado = 1;
         marcacoes_laterais();
 
@@ -113,14 +113,14 @@ void leitura(){
             ligado = 0;
         }
         //Caso seja necessário averiguar os valores lidos pelos sensores, descomente essa parte abaixo:
-        /*
+        
         for (uint8_t i = 0; i < qtd_sensores; i++){
             Serial.print("Sensor");
-            Serial.print(i);
+            Serial.print(i+1);
             Serial.print(": ");
             Serial.println(valores_sensor[i]);
         }
-        
+        /*
         for (uint8_t i = 0; i < 2; i++){
             Serial.print("Sensor borda ");
             Serial.print(i);
@@ -141,7 +141,7 @@ float calcula_erro(){
     float erro = 0;
     uint8_t cont_sensores = 0; 
     for (uint8_t i = 0; i < 6; i++){
-        if(valores_sensor[i] <= 100){
+        if(valores_sensor[i] <= 500){
             erro += erros[i];
             cont_sensores++;
         }
@@ -152,7 +152,7 @@ float calcula_erro(){
     else
         erro = erro/cont_sensores;
     
-    Serial.println(erro);
+    //Serial.println(erro);
     erro = constrain(erro,-4000,4000);
 
     return erro;
