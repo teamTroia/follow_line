@@ -104,9 +104,10 @@ void leitura(){
         }
 
         if(millis()-tempo_aux >= 8000){
-            velocidade = 110;
-            velocidade_maxima = 160;
-            Kd = 60;
+            velocidade = 130;
+            velocidade_maxima = 180;
+            Kd = 70;
+            Kp = 23;
         }
         digitalWrite(LED1,LOW);
         digitalWrite(LED2,LOW);
@@ -204,7 +205,7 @@ void marcacoes_laterais(){
     }
 
     if (marcacao_direita >= 2){ // número de marcações para parar
-        delay(100);
+        
         calibrado = 0;
     }
 /*
