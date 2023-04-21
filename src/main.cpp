@@ -16,11 +16,11 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0, parada = 1; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 13, Kd = 50, Ki = 0; //Constantes multiplicativas para o PID
+float Kp = 18, Kd = 90, Ki = 0.002; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
-int velocidade = 60; //Velocidade para os motores (pode e deve ser ajustada)
-uint8_t velocidade_maxima = 70;
+int velocidade = 80; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
+uint8_t velocidade_maxima = 100; //90 deu bom
 
 int erros[qtd_sensores] = {30, 26, 16, 6, -6, -16, -26, -30}; //Valores dos erros para cada situação de leitura dos sensores
 unsigned long int tempo_anterior = 0, tempo_anterior2 = 0, tempo_parada = 0;
@@ -182,24 +182,26 @@ float PID(float erro){
 }
 
 void marcacoes_laterais(){
-    if(valores_borda[0] <= 150 && millis()-tempo_anterior2 >= 350){
+    if(valores_borda[0] <= 1500 && millis()-tempo_anterior2 >= 300){
         tempo_anterior2 = millis();
         marcacao_esquerda++;
+        digitalWrite(LED2, HIGH);
+        delay(20);
     }
     
-    if(valores_borda[1] <= 150 && millis()-tempo_anterior >= 350){
+    if(valores_borda[1] <= 1500 && millis()-tempo_anterior >= 300){
         tempo_anterior = millis();
         marcacao_direita++;
         digitalWrite(LED1, HIGH);
-        delay(10);
+        delay(20);
     }
 
-    if (marcacao_direita >= 6){ // número de marcações para parar
-        delay(500);
+    if (marcacao_direita >= 2){ // número de marcações para parar
+        delay(100);
         calibrado = 0;
     }
-
 /*
+
     if (trechos1[marcacao_esquerda]){
         velocidade = 75;
         velocidade_maxima = 95;
