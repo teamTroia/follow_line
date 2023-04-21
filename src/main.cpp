@@ -16,14 +16,14 @@ uint16_t valores_borda[qtd_borda]; //Criação do vetor para armazenar os valore
 
 bool calibrado = 0, ligado = 0, parada = 1; //Indica se já foi calibrado e se ta ligado, respectivamente
 
-float Kp = 18, Kd = 90, Ki = 0.002; //Constantes multiplicativas para o PID
+float Kp = 22, Kd = 90, Ki = 0.002; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
-int velocidade = 80; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
-uint8_t velocidade_maxima = 100; //90 deu bom
+int velocidade = 85; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
+uint8_t velocidade_maxima = 120; //90 deu bom
 
 int erros[qtd_sensores] = {30, 26, 16, 6, -6, -16, -26, -30}; //Valores dos erros para cada situação de leitura dos sensores
-unsigned long int tempo_anterior = 0, tempo_anterior2 = 0, tempo_parada = 0;
+unsigned long int tempo_anterior = 0, tempo_anterior2 = 0, tempo_parada = 0, tempo_aux = 0;
 uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
 
 Motor motor = Motor();
@@ -99,7 +99,14 @@ void leitura(){
     if(calibrado && (digitalRead(BTN2) or ligado)){
         if(parada){
             tempo_parada = millis();
+            tempo_aux = millis();
             parada = 0;
+        }
+
+        if(millis()-tempo_aux >= 8000){
+            velocidade = 110;
+            velocidade_maxima = 160;
+            Kd = 60;
         }
         digitalWrite(LED1,LOW);
         digitalWrite(LED2,LOW);
