@@ -103,7 +103,7 @@ void leitura(){
             parada = 0;
         }
 
-        if(millis()-tempo_aux >= 8000){
+        if(millis()-tempo_aux >= 7000){
             velocidade = 150;
             velocidade_maxima = 200;
             Kp = 38;
