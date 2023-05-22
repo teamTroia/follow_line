@@ -65,3 +65,11 @@ void Motor::speed_motor(float valor_PID, int velocidade, uint8_t velocidade_maxi
         analogWrite(PWMB,vel_direito);
     }
 }
+
+bool Motor::getLigado(){
+    return ligado;
+}
+
+void Motor::setLigado(bool ligado){
+    this->ligado = ligado;
+}
