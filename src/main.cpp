@@ -1,7 +1,7 @@
 #include "./types.h"
 #include "Sensores.h"
-#include "bluetooth.h"
-#include "motor.h"
+#include "Bluetooth.h"
+#include "Motor.h"
 
 float Kp = 31, Kd = 110, Ki = 0.004; //Constantes multiplicativas para o PID
 

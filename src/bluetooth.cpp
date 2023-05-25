@@ -1,4 +1,4 @@
-#include "bluetooth.h"
+#include "Bluetooth.h"
 #include <SoftwareSerial.h>
 
 SoftwareSerial disp_bluetooth(PB7, PB6);
