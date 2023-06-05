@@ -17,6 +17,11 @@
 #define BTN1 PB3
 #define BTN2 PB4
 
+#define ENC1A PB15 //ENCODER DA ESQUERDA
+#define ENC1B PC15 //ENCODER DA ESQUERDA
+
+#define ENC2A PB5 //ENCODER DA DIREITA
+#define ENC2B PB11 //ENCODER DA DIREITA
 
 #define bluetooth_activate 1
 

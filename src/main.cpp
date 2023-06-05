@@ -2,6 +2,7 @@
 #include "Sensores.h"
 #include "Bluetooth.h"
 #include "Motor.h"
+#include "Encoder.h"
 
 float Kp = 31, Kd = 110, Ki = 0.004; //Constantes multiplicativas para o PID
 
@@ -12,10 +13,11 @@ uint8_t velocidade_maxima = 140; //90 deu bom
 Motor motor = Motor();
 Bluetooth bluetooth = Bluetooth();
 Sensores sensor = Sensores();
+Encoder encoder = Encoder();
 
 int erros[sensor.qtd_sensores] = {30, 26, 16, 6, -6, -16, -26, -30}; //Valores dos erros para cada situação de leitura dos sensores
 unsigned long int tempo_anterior = 0, tempo_anterior2 = 0;
-uint8_t marcacao_direita = 0, marcacao_esquerda = 0;
+uint8_t marcacao_direita = 0;
 
 void calibracao();
 void leitura();
@@ -33,6 +35,8 @@ void setup(){
     motor.init_motor();
     motor.stop_motor();
     sensor.initSensors();
+    encoder.initEncoder();
+    
 
     sensor.setSensorsPins();
     Serial.begin(9600); //Inicialização do monitor serial
@@ -63,7 +67,6 @@ void calibracao(){
         sensor.calibrateSensors();
         sensor.setCalibrado(1);
         marcacao_direita = 0;
-        marcacao_esquerda = 0;
         motor.setLigado(0);
     }
   }
@@ -74,6 +77,8 @@ void leitura(){
         digitalWrite(LED1,LOW);
         digitalWrite(LED2,LOW);
         sensor.readSensors();
+        encoder.readEncoderDir();
+        encoder.readEncoderEsq();
         motor.setLigado(1);
         marcacoes_laterais();
 
@@ -136,7 +141,7 @@ float PID(float erro){
 void marcacoes_laterais(){
     if(sensor.valores_borda[0] <= 1500 && millis()-tempo_anterior2 >= 300){
         tempo_anterior2 = millis();
-        marcacao_esquerda++;
+        //encoder.keepPositon();
         digitalWrite(LED2, HIGH);
         delay(20);
     }
@@ -151,20 +156,19 @@ void marcacoes_laterais(){
     if (marcacao_direita >= 2){ // número de marcações para parar
         delay(200);
         sensor.setCalibrado(0);
-    }
-/*
+        /*
+        for (int i = 0; i < Encoder::qtdTrechos; i++)
+        {
+            bluetooth.bluetoothPrintln("Marcacao esquerda " + i);
+            bluetooth.bluetoothPrintln(encoder.posicoesEsq[i]);
 
-    if (trechos1[marcacao_esquerda]){
-        velocidade = 75;
-        velocidade_maxima = 95;
-        digitalWrite(LED1,LOW);
-        delay(20);
-    }else{
-        velocidade = 75;
-        velocidade_maxima = 95;
-        digitalWrite(LED1,HIGH);
-        delay(20);
+            bluetooth.bluetoothPrintln("Marcacao direita " + i);
+            bluetooth.bluetoothPrintln(encoder.posicoesDir[i]);
+            delay(50);
+        }
+        */
+        
     }
-    
-*/
+
+
 }

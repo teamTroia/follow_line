@@ -80,3 +80,11 @@ String Bluetooth::leitura_bluetooth(){
     }
     return info;
 }
+
+void Bluetooth::bluetoothPrintln(double info){
+    disp_bluetooth.println(info);
+}
+
+void Bluetooth::bluetoothPrintln(String info){
+    disp_bluetooth.println(info);
+}
