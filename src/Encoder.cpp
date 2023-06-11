@@ -23,6 +23,10 @@ void Encoder::initEncoder(){
     pinMode(ENC2B,INPUT);  
     pinMode(ENC1A,INPUT);  
     pinMode(ENC1B,INPUT); 
+    attachInterrupt(digitalPinToInterrupt(ENC2A),readEncoderDir,RISING);
+    attachInterrupt(digitalPinToInterrupt(ENC2B),readEncoderDir,RISING);
+    attachInterrupt(digitalPinToInterrupt(ENC1A),readEncoderEsq,RISING);
+    attachInterrupt(digitalPinToInterrupt(ENC1B),readEncoderEsq,RISING);
 }
 
 double Encoder::getDistance(int pos){
