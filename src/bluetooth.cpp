@@ -88,3 +88,11 @@ void Bluetooth::bluetoothPrintln(double info){
 void Bluetooth::bluetoothPrintln(String info){
     disp_bluetooth.println(info);
 }
+
+void Bluetooth::bluetoothPrint(double info){
+    disp_bluetooth.println(info);
+}
+
+void Bluetooth::bluetoothPrint(String info){
+    disp_bluetooth.println(info);
+}

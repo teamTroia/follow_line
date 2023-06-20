@@ -7,8 +7,8 @@ void Motor::init_motor(){
     pinMode(MBIN1,OUTPUT);
     pinMode(MAIN2,OUTPUT);
     pinMode(MBIN2,OUTPUT);
-    pinMode (PWMA, OUTPUT);
-    pinMode (PWMB, OUTPUT);
+    pinMode(PWMA, OUTPUT);
+    pinMode(PWMB, OUTPUT);
 }
 
 void Motor::stop_motor(){

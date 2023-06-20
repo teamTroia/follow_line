@@ -13,7 +13,7 @@ void Sensores::setSensorsPins(){
 }
 
 void Sensores::calibrateSensors(){
-    for (int i = 0; i < 20; i++){ //Aqui tem que ver quantas vezes ele tem q passar pelo processo de calibração
+    for (int i = 0; i < 2; i++){ //Aqui tem que ver quantas vezes ele tem q passar pelo processo de calibração
         sensores.calibrate();
     
         digitalWrite(LED1, LOW); //Pisca os leds
@@ -36,14 +36,14 @@ void Sensores::readSensors(){
     borda.read(valores_borda);
 
     //Caso seja necessário averiguar os valores lidos pelos sensores, descomente essa parte abaixo:
-        
+/*        
         for (uint8_t i = 0; i < qtd_sensores; i++){
             Serial.print("Sensor");
             Serial.print(i+1);
             Serial.print(": ");
             Serial.println(valores_sensor[i]);
         }
-/*
+
         for (uint8_t i = 0; i < 2; i++){
             Serial.print("Sensor borda ");
             Serial.print(i);

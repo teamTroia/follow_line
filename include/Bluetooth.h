@@ -13,4 +13,7 @@ class Bluetooth {
         void bluetooth_init();
         void bluetoothPrintln(double info);
         void bluetoothPrintln(String info);
+        void bluetoothPrint(String info);
+        void bluetoothPrint(double info);
+
 };

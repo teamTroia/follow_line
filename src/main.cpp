@@ -7,7 +7,7 @@
 float Kp = 31, Kd = 110, Ki = 0.004; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
-int velocidade = 105; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
+int velocidade = 120; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
 uint8_t velocidade_maxima = 140; //90 deu bom
 
 Motor motor = Motor();
@@ -36,7 +36,6 @@ void setup(){
     motor.stop_motor();
     sensor.initSensors();
     encoder.initEncoder();
-    
 
     sensor.setSensorsPins();
     Serial.begin(9600); //Inicialização do monitor serial
@@ -77,9 +76,8 @@ void leitura(){
         digitalWrite(LED1,LOW);
         digitalWrite(LED2,LOW);
         sensor.readSensors();
-        encoder.readEncoderDir();
-        encoder.readEncoderEsq();
         motor.setLigado(1);
+        encoder.readEncoder();
         marcacoes_laterais();
 
         if(digitalRead(BTN1)){
@@ -141,7 +139,8 @@ float PID(float erro){
 void marcacoes_laterais(){
     if(sensor.valores_borda[0] <= 1500 && millis()-tempo_anterior2 >= 300){
         tempo_anterior2 = millis();
-        //encoder.keepPositon();
+        encoder.keepPositon();
+        encoder.resetPosition();
         digitalWrite(LED2, HIGH);
         delay(20);
     }
@@ -153,22 +152,13 @@ void marcacoes_laterais(){
         delay(20);
     }
 
-    if (marcacao_direita >= 2){ // número de marcações para parar
+    if (marcacao_direita >= 5){ // número de marcações para parar
         delay(200);
         sensor.setCalibrado(0);
-        /*
-        for (int i = 0; i < Encoder::qtdTrechos; i++)
-        {
-            bluetooth.bluetoothPrintln("Marcacao esquerda " + i);
-            bluetooth.bluetoothPrintln(encoder.posicoesEsq[i]);
-
-            bluetooth.bluetoothPrintln("Marcacao direita " + i);
-            bluetooth.bluetoothPrintln(encoder.posicoesDir[i]);
+        
+        for (int i = 0; i < Encoder::qtdTrechos; i++){
+            bluetooth.bluetoothPrintln(encoder.posicoes[i]);
             delay(50);
         }
-        */
-        
     }
-
-
 }

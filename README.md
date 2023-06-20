@@ -75,8 +75,13 @@ I(Erro);
 J(Correção da velocidade dos motores - PID);
 K((Leitura dos sensores));
 L(Motor gira sem correção de velocidade);
+M(Encoder);
 
 A-->B-->K-->C-->D;
+B-->M;
+D--->|Zera os valores|M;
+M--->|Altera a velocidade|L;
+M---->|Altera a velocidade|J;
 K-->E-->F;
 K-->G-->H;
 H--->|Sim|L;
@@ -93,6 +98,39 @@ Antes de passar o código, é preciso passar o bootloader no STM32. Para realiza
  3. `Stop -> Target -> Disconnect`
 
 Após realizar esses procedimentos, deve-se retornar o jumper no STM para a posição 0 (zero).
+
+## ST-Link / Linux
+Abaixo encontram-se os procedimentos para conseguir passar corretamente o código para o STM32 do Folou, utilizando-se o VS Code.
+
+Antes de passar o código, é preciso passar o bootloader no STM32. Para realizar esse processo, deve-se colocar pelo menos um jumper na posição 1 (um) do STM e depois seguir o passo a passo abaixo:
+
+1. Faça do download do arquivo [generic_boot20_pc13.bin](https://github.com/rogerclarkmelbourne/STM32duino-bootloader/tree/master/binaries
+).
+
+2. Instale o Arduino IDE, para isso baixe a versão [AppImage](https://www.arduino.cc/en/software).
+
+3. Dentro do Arduino IDE:
+
+ ` Arquivos -> Preferências -> Adicione a URL adicional: http://dan.drown.org/stm32duino/package_STM32duino_index.json`.
+
+4. Ainda dentro do Arduino IDE:
+
+`Ferramentas -> Placas -> Gerenciador De Placas -> Procure STM32F1xx -> Instalar`
+
+5. No terminal do linux é necessário configurar as [udev rules](https://embarcados.com.br/utilizando-o-udev-para-criar-automacoes-com-porta-usb-no-linux/). Para isso, digite:
+
+`sudo apt install stlink-tools` 
+
+`sudo apt install stlink-tools`
+
+`cd /etc/udev/rules.d/ `
+
+`curl -fsSL curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/system/99-platformio-udev.rules | sudo tee /etc/udev/rules.d/99-platformio-udev.rules`
+
+`sudo cp 99-platformio-udev.rules /etc/udev/rules.d/99-platformio-udev.rules`
+
+`sudo service udev restart`
+
 
 ## GitHub
 
