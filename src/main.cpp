@@ -3,21 +3,24 @@
 #include "Bluetooth.h"
 #include "Motor.h"
 #include "Encoder.h"
+#include "EncoderGambi.h"
 
 float Kp = 31, Kd = 110, Ki = 0.004; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
-int velocidade = 120; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
-uint8_t velocidade_maxima = 140; //90 deu bom
+int velocidade = 110; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
+uint8_t velocidade_maxima = 200; //90 deu bom
 
 Motor motor = Motor();
 Bluetooth bluetooth = Bluetooth();
 Sensores sensor = Sensores();
-Encoder encoder = Encoder();
+//EncoderGambi gambi = EncoderGambi();
+//Encoder encoder = Encoder();
 
 int erros[sensor.qtd_sensores] = {30, 26, 16, 6, -6, -16, -26, -30}; //Valores dos erros para cada situação de leitura dos sensores
 unsigned long int tempo_anterior = 0, tempo_anterior2 = 0;
 uint8_t marcacao_direita = 0;
+
 
 void calibracao();
 void leitura();
@@ -35,7 +38,7 @@ void setup(){
     motor.init_motor();
     motor.stop_motor();
     sensor.initSensors();
-    encoder.initEncoder();
+    //encoder.initEncoder();
 
     sensor.setSensorsPins();
     Serial.begin(9600); //Inicialização do monitor serial
@@ -77,8 +80,13 @@ void leitura(){
         digitalWrite(LED2,LOW);
         sensor.readSensors();
         motor.setLigado(1);
-        encoder.readEncoder();
+        //encoder.readEncoder();
         marcacoes_laterais();
+        // if(gambi.alteraVelocidade(millis()-tempo_anterior2)){
+        //     velocidade = 90;
+        // }else{
+        //     velocidade = 110;
+        // }
 
         if(digitalRead(BTN1)){
             sensor.setCalibrado(0);
@@ -137,28 +145,30 @@ float PID(float erro){
 }
 
 void marcacoes_laterais(){
-    if(sensor.valores_borda[0] <= 1500 && millis()-tempo_anterior2 >= 300){
+    if(sensor.valores_borda[0] <= 1500 || sensor.valores_borda[1] <= 1500 && millis()-tempo_anterior2 >= 300){
         tempo_anterior2 = millis();
-        encoder.keepPositon();
-        encoder.resetPosition();
+        //encoder.keepPositon();
+        //encoder.resetPosition();
         digitalWrite(LED2, HIGH);
         delay(20);
     }
     
-    if(sensor.valores_borda[1] <= 1500 && millis()-tempo_anterior >= 300){
+    if(sensor.valores_borda[2] <= 1500 && millis()-tempo_anterior >= 300){
         tempo_anterior = millis();
         marcacao_direita++;
         digitalWrite(LED1, HIGH);
         delay(20);
     }
 
-    if (marcacao_direita >= 5){ // número de marcações para parar
-        delay(200);
-        sensor.setCalibrado(0);
+    // if (marcacao_direita >= 5){ // número de marcações para parar
+    //     delay(200);
+    //     motor.stop_motor();
+    //     motor.setLigado(0);
+    //     sensor.setCalibrado(0);
         
-        for (int i = 0; i < Encoder::qtdTrechos; i++){
-            bluetooth.bluetoothPrintln(encoder.posicoes[i]);
-            delay(50);
-        }
-    }
+        // for (int i = 0; i < Encoder::qtdTrechos; i++){
+        //     bluetooth.bluetoothPrintln(encoder.posicoes[i]);
+        //     delay(50);
+        // }
+    //}
 }
