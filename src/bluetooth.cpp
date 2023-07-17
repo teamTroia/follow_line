@@ -80,3 +80,16 @@ String Bluetooth::leitura_bluetooth(){
     }
     return info;
 }
+/*
+void Bluetooth::println(String dado){
+    disp_bluetooth.println(dado);
+}
+
+void Bluetooth::println(int dado){
+    disp_bluetooth.println(dado);
+}
+
+void Bluetooth::println(float dado){
+    disp_bluetooth.println(dado);
+}
+*/
