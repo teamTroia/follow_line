@@ -3,12 +3,11 @@
 Motor::Motor() {}
 
 void Motor::init_motor(){
-    pinMode(MAIN1,OUTPUT);
     pinMode(MBIN1,OUTPUT);
     pinMode(MAIN2,OUTPUT);
     pinMode(MBIN2,OUTPUT);
-    pinMode (PWMA, OUTPUT);
-    pinMode (PWMB, OUTPUT);
+    pinMode(PWMA,OUTPUT);
+    pinMode(PWMB,OUTPUT);
 }
 
 void Motor::stop_motor(){
@@ -27,13 +26,13 @@ void Motor::speed_motor(float valor_PID, int velocidade, uint8_t velocidade_maxi
     vel_esquerdo = constrain(vel_esquerdo,-velocidade_maxima,velocidade_maxima); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
     vel_direito = constrain(vel_direito,-velocidade_maxima,velocidade_maxima); //Limita o valor da velocidade a no mínimo 0 e no máximo 255
 
-/*
+
     Serial.print("Vel_esquerdo: ");
     Serial.println(vel_esquerdo);
 
     Serial.print("Vel_direito: ");
     Serial.println(vel_direito);
-*/
+
 
     if(vel_esquerdo > 0){
         digitalWrite(MAIN2,LOW);
