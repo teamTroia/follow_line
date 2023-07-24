@@ -30,7 +30,6 @@ void setup(){
     pinMode(BTN1,INPUT_PULLDOWN);
     pinMode(BTN2,INPUT_PULLDOWN);
     pinMode(LED1,OUTPUT);
-    pinMode(LED2,OUTPUT);
 
     motor.init_motor();
     motor.stop_motor();
@@ -51,7 +50,6 @@ void loop(){
 void calibracao(){
     while ((!digitalRead(BTN2)) && (!sensor.getCalibrado())) { //Fica preso no while até que o botão de calibração seja pressionado
     digitalWrite(LED1, HIGH); //Os leds ficam acesso até que o botão seja pressionado
-    digitalWrite(LED2, HIGH); //Os leds ficam acesso até que o botão seja pressionado
 
     motor.stop_motor();
 
@@ -74,7 +72,6 @@ void calibracao(){
 void leitura(){
     if(sensor.getCalibrado() && (digitalRead(BTN2) or motor.getLigado())){
         digitalWrite(LED1,LOW);
-        digitalWrite(LED2,LOW);
         sensor.readSensors();
         motor.setLigado(1);
         marcacoes_laterais();
@@ -85,7 +82,7 @@ void leitura(){
             motor.setLigado(0);
         }
     
-        motor.speed_motor(PID(calcula_erro()),velocidade,velocidade_maxima);
+        //motor.speed_motor(PID(calcula_erro()),velocidade,velocidade_maxima);
 
         if(bluetooth_activate)
             bluetooth.bluetooth_PID(Kp,Kd,Ki,velocidade_maxima,velocidade);
@@ -139,9 +136,7 @@ float PID(float erro){
 void marcacoes_laterais(){
     if((sensor.valores_borda[0] <= 1500 || sensor.valores_borda[1] <= 1500) && sensor.valores_borda[2] >= 500 && millis()-tempo_anterior2 >= 300){
         marcacao_esquerda++;
-        digitalWrite(LED2, HIGH);
         delay(20);
-        Serial.println(gambi.retornaDistancia(millis()-tempo_anterior2));
         tempo_anterior2 = millis();
     }
     

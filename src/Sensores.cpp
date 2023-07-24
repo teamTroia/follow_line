@@ -8,8 +8,8 @@ void Sensores::initSensors(){
 }
 
 void Sensores::setSensorsPins(){
-    borda.setSensorPins((const uint8_t[]){PB11, PB10, PA8},qtd_borda); //Definição dos pinos dos sensores de borda (direita esquerda, nessa ordem)
-    sensores.setSensorPins((const uint8_t[]){PA15, PA6, PA5, PA4, PA3, PA0, PB1, PA9}, qtd_sensores); //Definição dos pinos dos sensores frontais, da ESQUERDA PARA DIREITA (lembra que eu observei a Top Layer, ou seja, PA0 = S1)
+    borda.setSensorPins((const uint8_t[]){PB12, PB10, PA8},qtd_borda); //Definição dos pinos dos sensores de borda (direita esquerda, nessa ordem)
+    sensores.setSensorPins((const uint8_t[]){PA7, PA6, PA5, PA4, PA3, PA0, PB1, PA2}, qtd_sensores); //Definição dos pinos dos sensores frontais, da ESQUERDA PARA DIREITA (lembra que eu observei a Top Layer, ou seja, PA0 = S1)
 }
 
 void Sensores::calibrateSensors(){
@@ -17,10 +17,8 @@ void Sensores::calibrateSensors(){
         sensores.calibrate();
     
         digitalWrite(LED1, LOW); //Pisca os leds
-        digitalWrite(LED2, LOW); //Pisca os leds
         delay(200);
         digitalWrite(LED1, HIGH); //Pisca os leds
-        digitalWrite(LED2, HIGH); //Pisca os leds
         delay(200);
     }
     calibrado = 1; //Indica que o robô já foi calibrado e pode sair do loop de calibração
@@ -42,14 +40,14 @@ void Sensores::readSensors(){
             Serial.print(": ");
             Serial.println(valores_sensor[i]);
         }
-    
+    */
         for (uint8_t i = 0; i < qtd_borda; i++){
             Serial.print("Sensor borda ");
             Serial.print(i);
             Serial.print(": ");
             Serial.println(valores_borda[i]);
         }
-    */    
+        
         
 }
 
