@@ -1,18 +1,18 @@
 #include "./types.h"
 #include "Sensores.h"
-#include "bluetooth.h"
+//#include "bluetooth.h"
 #include "motor.h"
 #include "EncoderGambi.h"
 
 
-float Kp = 42, Kd = 130, Ki = 0.004; //Constantes multiplicativas para o PID
+float Kp = 5, Kd = 8, Ki = 0.004; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
-int velocidade = 20; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
-uint8_t velocidade_maxima = 50; //90 deu bom
+int velocidade = 40; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
+uint8_t velocidade_maxima = 60; //90 deu bom
 
 Motor motor = Motor();
-Bluetooth bluetooth = Bluetooth();
+//Bluetooth bluetooth = Bluetooth();
 Sensores sensor = Sensores();
 EncoderGambi gambi = EncoderGambi();
 
@@ -36,11 +36,10 @@ void setup(){
     motor.stop_motor();
     sensor.initSensors();
 
-    sensor.setSensorsPins();
     Serial.begin(9600); //Inicialização do monitor serial
 
-    if(bluetooth_activate)
-        bluetooth.bluetooth_init();
+    //if(bluetooth_activate)
+    //    bluetooth.bluetooth_init();
 }
 
 void loop(){
@@ -54,8 +53,8 @@ void calibracao(){
 
     motor.stop_motor();
 
-    if(bluetooth_activate)
-        bluetooth.bluetooth_opcoes(); 
+    //if(bluetooth_activate)
+        //bluetooth.bluetooth_opcoes(); 
 
     delay(100);
 
@@ -73,7 +72,8 @@ void calibracao(){
 void leitura(){
     if(sensor.getCalibrado() && (digitalRead(BTN2) or motor.getLigado())){
         digitalWrite(LED1,LOW);
-        sensor.readSensors();
+        sensor.readCalibrated();
+        sensor.readBorda();
         motor.setLigado(1);
         marcacoes_laterais();
         
@@ -82,12 +82,11 @@ void leitura(){
             sensor.setCalibrado(0);
             motor.setLigado(0);
         }
-    
-        analogWrite(PWMA,20);
-        //motor.speed_motor(PID(calcula_erro()),velocidade,velocidade_maxima);
 
-        if(bluetooth_activate)
-            bluetooth.bluetooth_PID(Kp,Kd,Ki,velocidade_maxima,velocidade);
+        motor.speed_motor(PID(calcula_erro()),velocidade,velocidade_maxima);
+
+        //if(bluetooth_activate)
+        //    bluetooth.bluetooth_PID(Kp,Kd,Ki,velocidade_maxima,velocidade);
     }
 }
 
@@ -151,23 +150,4 @@ void marcacoes_laterais(){
         delay(20);
     }
 
-    // if (marcacao_direita >= 2){ // número de marcações para parar
-    //     delay(200);
-    //     sensor.setCalibrado(0);
-    // }
-/*
-
-    if (trechos1[marcacao_esquerda]){
-        velocidade = 75;
-        velocidade_maxima = 95;
-        digitalWrite(LED1,LOW);
-        delay(20);
-    }else{
-        velocidade = 75;
-        velocidade_maxima = 95;
-        digitalWrite(LED1,HIGH);
-        delay(20);
-    }
-    
-*/
 }
