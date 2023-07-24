@@ -35,21 +35,21 @@ void Sensores::readSensors(){
     borda.read(valores_borda);
 
     //Caso seja necessário averiguar os valores lidos pelos sensores, descomente essa parte abaixo:
-        /*
+    /*    
         for (uint8_t i = 0; i < qtd_sensores; i++){
             Serial.print("Sensor");
             Serial.print(i+1);
             Serial.print(": ");
             Serial.println(valores_sensor[i]);
         }
-    */
+    
         for (uint8_t i = 0; i < qtd_borda; i++){
             Serial.print("Sensor borda ");
             Serial.print(i);
             Serial.print(": ");
             Serial.println(valores_borda[i]);
         }
-        
+    */    
         
 }
 
