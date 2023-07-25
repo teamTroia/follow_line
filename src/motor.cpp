@@ -8,7 +8,7 @@ void Motor::init_motor(){
     pinMode(MAIN2,OUTPUT);
     pinMode(MBIN2,OUTPUT);
     pinMode(PWMA,OUTPUT);
-    //pinMode(PWMB,OUTPUT);
+    pinMode(PWMB,OUTPUT);
 }
 
 void Motor::stop_motor(){
@@ -17,7 +17,7 @@ void Motor::stop_motor(){
     digitalWrite(MAIN2,0);
     digitalWrite(MBIN2,0);
     digitalWrite(PWMA,0);
-    //digitalWrite(PWMB,0);
+    digitalWrite(PWMB,0);
 }
 
 void Motor::speed_motor(float valor_PID, int velocidade, uint8_t velocidade_maxima){
@@ -52,17 +52,17 @@ void Motor::speed_motor(float valor_PID, int velocidade, uint8_t velocidade_maxi
 
     if(vel_direito > 0){
         digitalWrite(MBIN2,LOW);
-        //analogWrite(PWMB,vel_direito);
+        analogWrite(PWMB,vel_direito);
         digitalWrite(MBIN1,HIGH);
     }else if(vel_direito == 0){
-        //digitalWrite(PWMB,HIGH);
+        digitalWrite(PWMB,HIGH);
         digitalWrite(MBIN1,HIGH);
         digitalWrite(MBIN2,HIGH);
     }else{
         vel_direito = -vel_direito;
         digitalWrite(MBIN1,LOW);
         digitalWrite(MBIN2,HIGH);
-        //analogWrite(PWMB,vel_direito);
+        analogWrite(PWMB,vel_direito);
     }
 }
 

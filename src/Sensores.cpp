@@ -8,7 +8,7 @@ void Sensores::initSensors(){
 }
 
 void Sensores::setSensorsPins(){
-    borda.setSensorPins((const uint8_t[]){PB12, PB10, PA8},qtd_borda); //Definição dos pinos dos sensores de borda (direita esquerda, nessa ordem)
+    borda.setSensorPins((const uint8_t[]){PB10, PA8},qtd_borda); //Definição dos pinos dos sensores de borda (direita esquerda, nessa ordem)
     sensores.setSensorPins((const uint8_t[]){PA7, PA6, PA5, PA4, PA3, PA0, PB1, PA2}, qtd_sensores); //Definição dos pinos dos sensores frontais, da ESQUERDA PARA DIREITA (lembra que eu observei a Top Layer, ou seja, PA0 = S1)
 }
 
@@ -33,21 +33,21 @@ void Sensores::readSensors(){
     borda.read(valores_borda);
 
     //Caso seja necessário averiguar os valores lidos pelos sensores, descomente essa parte abaixo:
-    /*    
+      
         for (uint8_t i = 0; i < qtd_sensores; i++){
             Serial.print("Sensor");
             Serial.print(i+1);
             Serial.print(": ");
             Serial.println(valores_sensor[i]);
         }
-    */
+    /*
         for (uint8_t i = 0; i < qtd_borda; i++){
             Serial.print("Sensor borda ");
             Serial.print(i);
             Serial.print(": ");
             Serial.println(valores_borda[i]);
         }
-        
+        */
         
 }
 

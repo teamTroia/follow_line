@@ -4,11 +4,11 @@
 #include "motor.h"
 #include "EncoderGambi.h"
 
-float Kp = 42, Kd = 130, Ki = 0.004; //Constantes multiplicativas para o PID
+float Kp = 10, Kd = 50, Ki = 0.004; //Constantes multiplicativas para o PID
 
 float I = 0, erro_anterior = 0;
-int velocidade = 140; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
-uint8_t velocidade_maxima = 190; //90 deu bom
+int velocidade = 50; //Velocidade para os motores (pode e deve ser ajustada) OBS: 60 da bom
+uint8_t velocidade_maxima = 70; //90 deu bom
 
 Motor motor = Motor();
 Bluetooth bluetooth = Bluetooth();
@@ -82,7 +82,7 @@ void leitura(){
             motor.setLigado(0);
         }
     
-        //motor.speed_motor(PID(calcula_erro()),velocidade,velocidade_maxima);
+        motor.speed_motor(PID(calcula_erro()),velocidade,velocidade_maxima);
 
         if(bluetooth_activate)
             bluetooth.bluetooth_PID(Kp,Kd,Ki,velocidade_maxima,velocidade);
